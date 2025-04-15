@@ -1,4 +1,4 @@
-name: "SchHub"
+name: 'SchHub'
 
 services:
   postgres:
