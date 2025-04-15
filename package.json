@@ -1,7 +1,7 @@
 {
-  "name": "next-nest-template",
+  "name": "socialsch",
   "version": "0.0.0",
-  "description": "Template repository for full-stack NestJS + NextJS projects",
+  "description": "Social platform for Schönherz residents",
   "author": "Kir-Dev",
   "license": "MIT",
   "private": true,

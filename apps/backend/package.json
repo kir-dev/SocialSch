@@ -1,7 +1,7 @@
 {
-  "name": "@next-nest-template/backend",
+  "name": "@socialsch/backend",
   "version": "0.0.0",
-  "description": "NestJS backend for NestJS + Next.js template",
+  "description": "NestJS backend for the SocialSch project",
   "author": "Kir-Dev",
   "private": true,
   "license": "MIT",
