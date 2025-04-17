@@ -8,11 +8,6 @@ import { User } from '@prisma/client';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(): string {
-    return this.usersService.create();
-  }
-
   @Get()
   async findAll(): Promise<User[]> {
     return this.usersService.findAll();

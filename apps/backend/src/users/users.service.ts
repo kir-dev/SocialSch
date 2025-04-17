@@ -7,9 +7,6 @@ import { PrismaService } from 'nestjs-prisma';
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
-  create(): string {
-    return 'Nem mukodik a create';
-  }
 
   async findAll(): Promise<User[]> {
     return this.prisma.user.findMany();
