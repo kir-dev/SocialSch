@@ -21,9 +21,10 @@ model User {
 }
 
 model Post {
-  postId    String   @id
+  postId    Int      @id @default(autoincrement())
   title     String
   content   String
+  visible   Boolean  @default(true)
   author    User?    @relation(fields: [authorId], references: [userId])
   authorId  String?
   createdAt DateTime @default(now())
