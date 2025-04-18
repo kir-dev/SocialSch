@@ -2,29 +2,24 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from 'nestjs-prisma';
-import { User } from '../users/entities/user.entity';
-import { Post } from './entities/post.entity';
+
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import { PostEntity } from './entities/post.entity';
 
 @Injectable()
 export class PostsService {
   constructor(private readonly prisma: PrismaService) {}
-  create(createPostDto: CreatePostDto, user: User): Promise<Post> {
+  create(createPostDto: CreatePostDto): Promise<PostEntity> {
     return this.prisma.post.create({
       data: {
         title: createPostDto.title,
         content: createPostDto.content,
         ...createPostDto,
-        author: {
-          connect: {
-            userId: user.userId,
-          },
-        },
       },
     });
   }
 
-  findAll(): Promise<Post[]> {
+  findAll(): Promise<PostEntity[]> {
     return this.prisma.post.findMany({
       where: {
         visible: true,
@@ -32,7 +27,7 @@ export class PostsService {
     });
   }
 
-  async findOne(id: number): Promise<Post> {
+  async findOne(id: number): Promise<PostEntity> {
     try {
       return await this.prisma.post.findUniqueOrThrow({
         where: {
@@ -57,7 +52,7 @@ export class PostsService {
     }
   }
 
-  async update(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
+  async update(id: number, updatePostDto: UpdatePostDto): Promise<PostEntity> {
     try {
       return await this.prisma.post.update({
         where: {
@@ -78,7 +73,7 @@ export class PostsService {
     }
   }
 
-  async remove(id: number): Promise<Post> {
+  async remove(id: number): Promise<PostEntity> {
     try {
       return await this.prisma.post.delete({
         where: {
