@@ -9,7 +9,7 @@ import { PostEntity } from './entities/post.entity';
 @Injectable()
 export class PostsService {
   constructor(private readonly prisma: PrismaService) {}
-  create(createPostDto: CreatePostDto): Promise<PostEntity> {
+  async create(createPostDto: CreatePostDto): Promise<PostEntity> {
     return this.prisma.post.create({
       data: {
         title: createPostDto.title,
@@ -19,7 +19,7 @@ export class PostsService {
     });
   }
 
-  findAll(): Promise<PostEntity[]> {
+  async findAll(): Promise<PostEntity[]> {
     return this.prisma.post.findMany({
       where: {
         visible: true,
