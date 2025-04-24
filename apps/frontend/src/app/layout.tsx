@@ -2,6 +2,7 @@ import './globals.css';
 
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Image from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,7 +18,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='hu'>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <div className='flex h-screen'>
+          <div className='w-1/2 h-full'>
+            <Image src='/doom.jpg' alt='Hero image' width={500} height={500} className='object-cover w-full h-full' />
+          </div>
+          {children}
+        </div>
+      </body>
     </html>
   );
 }
