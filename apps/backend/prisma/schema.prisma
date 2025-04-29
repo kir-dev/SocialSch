@@ -14,19 +14,33 @@ datasource db {
 }
 
 model User {
-  userId   String @id
-  email    String @unique
+  userId   String    @id
+  email    String    @unique
   userName String
   Post     Post[]
+  Comment  Comment[]
 }
 
 model Post {
-  postId    Int      @id @default(autoincrement())
+  postId    Int       @id @default(autoincrement())
   title     String
   content   String
-  visible   Boolean  @default(true)
-  author    User?    @relation(fields: [authorId], references: [userId])
+  visible   Boolean   @default(true)
+  author    User?     @relation(fields: [authorId], references: [userId])
   authorId  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Comment   Comment[]
+}
+
+model Comment {
+  commentId Int      @id @default(autoincrement())
+  content   String
+  visible   Boolean  @default(true)
+  post      Post     @relation(fields: [postId], references: [postId])
+  postId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [userId])
+  userId    String
 }
