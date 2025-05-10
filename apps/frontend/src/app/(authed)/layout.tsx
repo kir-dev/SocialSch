@@ -1,7 +1,7 @@
 'use client';
 
-import { redirect, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { redirect } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 export default function AuthedLayout({
   children,
@@ -10,12 +10,9 @@ export default function AuthedLayout({
 }>) {
   const isSignedIn = true;
 
-  const router = useRouter();
-
   useEffect(() => {
     if (!isSignedIn) {
       redirect('/signup');
-      router.push('/signup');
     }
   }, [isSignedIn]);
 
