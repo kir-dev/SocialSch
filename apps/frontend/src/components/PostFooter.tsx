@@ -20,26 +20,26 @@ export default function PostFooter({ likeCount, commentCount, createdAt }: PostF
   }
 
   return (
-    <CardFooter className={'flex flex-row justify-between'}>
-      <div className={'flex flex-row items-center'}>
-        <div className={'flex flex-row items-center'}>
-          <p className={'font-bold pr-1'}>{likeNumber}</p>
+    <CardFooter className='flex flex-row justify-between'>
+      <div className='flex flex-row items-center'>
+        <div className='flex flex-row items-center'>
+          <p className='font-bold pr-1'>{likeNumber}</p>
           <Button
             className='bg-transparent p-0 cursor-pointer border-0 shadow-none hover:bg-transparent focus:bg-transparent active:bg-transparent'
             asChild
             onClick={() => toggleLike()}
           >
-            <Heart className={isLiked ? 'text-red-600 fill-red-600' : 'text-red-600'} size={'16'} />
+            <Heart className={isLiked ? 'text-red-600 fill-red-600' : 'text-red-600'} size='16' />
           </Button>
         </div>
-        <div className={'flex flex-row items-center pl-5'}>
-          <p className={'font-bold pr-1 '}>{commentCount}</p>
-          <Button variant={'link'} className={'text-foreground p-0 cursor-pointer'}>
+        <div className='flex flex-row items-center pl-5'>
+          <p className='font-bold pr-1 '>{commentCount}</p>
+          <Button variant='link' className='text-foreground p-0 cursor-pointer'>
             Comments
           </Button>
         </div>
       </div>
-      <span className={'text-foreground/24 text-xs px-2'}>{format(createdAt, 'yyyy/MM/dd')}</span>
+      <span className='text-foreground/24 text-xs px-2'>{format(createdAt, 'yyyy/MM/dd')}</span>
     </CardFooter>
   );
 }
