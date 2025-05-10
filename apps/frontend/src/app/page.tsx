@@ -12,7 +12,7 @@ function findUserById(targetId: string): User {
 
 export default function Home() {
   return (
-    <main className='min-h-screen min-w-screen flex flex-col justify-start items-center pt-10'>
+    <main className='flex-1 px-4 md:px-8 py-10 flex flex-col items-center space-y-6 pt-10'>
       {posts.map((post: PostEntity) => (
         <PostCard key={post.postId} post={post} user={findUserById(post.authorId)} />
       ))}
