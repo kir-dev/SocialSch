@@ -1,9 +1,7 @@
-import { HelloWorld } from '@/components/hello-world';
-
 export default function Home() {
   return (
-    <main className='flex items-center justify-center'>
-      <HelloWorld className='mt-10' />
+    <main className='min-h-screen min-w-screen flex flex-row justify-center'>
+      <h1>Main Page</h1>
     </main>
   );
 }
