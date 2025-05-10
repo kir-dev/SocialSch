@@ -4,9 +4,13 @@ import { Post } from '@/types';
 
 const posts: Post[] = [
   {
-    id: '1',
+    postId: 1,
     title: 'Post 1',
     content: 'This is the content of post 1',
+    visible: false,
+    authorId: '',
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];
 
@@ -18,7 +22,7 @@ export default async function HomePage() {
       <Button>Click me</Button>
       {/*<ThemeToggle />*/}
       {posts.map((post) => (
-        <PostComponent key={post.id} post={post} author='valaki' title='valami' />
+        <PostComponent key={post.postId} post={post} author='valaki' title='valami' />
       ))}
     </div>
   );

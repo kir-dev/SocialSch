@@ -1,7 +1,7 @@
 import { CircleUserRound } from 'lucide-react';
-import { User } from '../../../backend/src/users/entities/user.entity';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { User } from '@/types';
 
 interface PostHeaderProps {
   user: User;

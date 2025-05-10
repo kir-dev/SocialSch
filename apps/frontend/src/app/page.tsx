@@ -1,6 +1,5 @@
-import { PostEntity } from '../../../backend/src/posts/entities/post.entity';
 import PostCard from '@/components/PostCard';
-import { User } from '../../../backend/src/users/entities/user.entity';
+import type { Post, User } from '@/types';
 
 function findUserById(targetId: string): User {
   const user = users.find((user) => user.userId === targetId);
@@ -13,7 +12,7 @@ function findUserById(targetId: string): User {
 export default function Home() {
   return (
     <main className='flex-1 px-4 md:px-8 py-10 flex flex-col items-center space-y-6 pt-10'>
-      {posts.map((post: PostEntity) => (
+      {posts.map((post: Post) => (
         <PostCard key={post.postId} post={post} user={findUserById(post.authorId)} />
       ))}
     </main>

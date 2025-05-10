@@ -1,12 +1,11 @@
 import PostHeader from '@/components/PostHeader';
-import { PostEntity } from '../../../backend/src/posts/entities/post.entity';
 import PostFooter from '@/components/PostFooter';
-import { User } from '../../../backend/src/users/entities/user.entity';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
+import { Post, User } from '@/types';
 
 interface PostProps {
   user: User;
-  post: PostEntity;
+  post: Post;
 }
 
 //Posts should contain like and comment count in the future, two hardcoded value for now
