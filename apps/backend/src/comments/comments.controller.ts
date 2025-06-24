@@ -1,5 +1,7 @@
 import { CurrentUser } from '@kir-dev/passport-authsch';
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from 'src/users/entities/user.entity';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -26,6 +28,8 @@ export class CommentsController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   update(
     @Param('id') id: string,
     @Body() updateCommentDto: UpdateCommentDto,
