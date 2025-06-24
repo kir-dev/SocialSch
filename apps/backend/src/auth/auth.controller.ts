@@ -2,6 +2,7 @@
 import { CurrentUser } from '@kir-dev/passport-authsch';
 import { Controller, Get, Redirect, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from 'src/users/entities/user.entity';
 import { AuthService } from './auth.service';
 
@@ -27,7 +28,18 @@ export class AuthController {
   oauthRedirect(@CurrentUser() user: User) {
     const jwt = this.authService.login(user);
     return {
-      url: `${process.env.FRONTEND_URL}/auth?jwt=${jwt}`,
+      url: `${process.env.FRONTEND_URL}/auth/callback?jwt=${jwt}`,
     };
+  }
+
+  /**
+   * Returns the current user.
+   * Requires a valid JWT token.
+   */
+  @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  me(@CurrentUser() user: User): User {
+    return user;
   }
 }
