@@ -6,5 +6,5 @@ export class User {
   @IsEmail()
   email: string;
   @IsString()
-  username: string;
+  userName: string;
 }

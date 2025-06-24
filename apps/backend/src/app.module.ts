@@ -7,9 +7,10 @@ import { UsersModule } from './users/users.module';
 //import { PostModule } from './post/post.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [PrismaModule.forRoot({ isGlobal: true }), UsersModule, PostsModule, CommentsModule],
+  imports: [PrismaModule.forRoot({ isGlobal: true }), UsersModule, PostsModule, CommentsModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
