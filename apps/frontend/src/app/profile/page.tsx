@@ -1,13 +1,13 @@
 import type { User } from '@/types';
 import Header from '@/components/profile/Header';
-import Description from '@/components/profile/Description';
+import Content from '@/components/profile/Content';
 
 export default function Home() {
   return (
     <main className='flex-1 px-4 md:px-8 flex flex-col items-center space-y-6'>
-      <div className='felx-1 max-w-200 bg-pink-500 rounded-3xl'>
+      <div className='felx-1 max-w-200 rounded-3xl bg-card'>
         <Header user={users[0]} />
-        <Description user={users[1]} />
+        <Content user={users[0]} />
       </div>
     </main>
   );
