@@ -1,21 +1,22 @@
-import { User } from '@/types';
-import Description from '@/components/profile/Description';
+import { Post } from '@/types';
+import { Button } from '@/components/ui/button';
 
-interface UserProps {
-  user: User;
+interface PostProps {
+  posts: Post[];
 }
 
-export default function Content({ user }: UserProps) {
+export default function ({ posts }: PostProps) {
   return (
-    <div className='flex flex-col space-y-2 pl-4'>
-      <div className='flex flex-col w-full'>
-        <p className='text-2xl'>{user.username}</p>
-        <p className='text-xl'>{user.email}</p>
-      </div>
-      <p className='w-full'>{message}</p>
+    <div className='grid grid-cols-4 gap-2'>
+      {posts.map((post) => (
+        <Button
+          key={post.postId}
+          className='bg-gray-500 p-4 rounded-lg text-center w-full h-full whitespace-normal text-foreground'
+          type='button'
+        >
+          {post.title}
+        </Button>
+      ))}
     </div>
   );
 }
-
-const message =
-  'This is a placeholder message for the user profile content. It can be replaced with actual user data or any other relevant information.';
