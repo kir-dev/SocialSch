@@ -18,6 +18,7 @@ export class CommentsController {
   }
 
   @Get()
+  @UseGuards()
   findAll(): Promise<CommentEntity[]> {
     return this.commentsService.findAll();
   }

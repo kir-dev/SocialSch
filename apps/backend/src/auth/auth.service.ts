@@ -20,15 +20,15 @@ export class AuthService {
 
   async findOrCreateUser(userProfile: AuthSchProfile): Promise<User> {
     let user = await this.prisma.user.findUnique({
-      where: { userId: userProfile.authSchId },
+      where: { authSchId: userProfile.authSchId },
     });
 
     if (!user) {
       user = await this.prisma.user.create({
         data: {
-          userId: userProfile.authSchId,
+          authSchId: userProfile.authSchId,
           email: userProfile.email,
-          userName: userProfile.fullName,
+          username: userProfile.fullName,
           /// TODO: Save neptun as well if available
         },
       });

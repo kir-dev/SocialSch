@@ -30,8 +30,8 @@ export class CommentsService {
       include: {
         User: {
           select: {
-            userId: true,
-            userName: true,
+            authSchId: true,
+            username: true,
           },
         },
       },
@@ -39,15 +39,15 @@ export class CommentsService {
   }
 
   async findOne(id: number): Promise<CommentEntity> {
-    return await this.prisma.comment.findUnique({
+    return this.prisma.comment.findUnique({
       where: {
         commentId: id,
       },
       include: {
         User: {
           select: {
-            userId: true,
-            userName: true,
+            authSchId: true,
+            username: true,
           },
         },
       },

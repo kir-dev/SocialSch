@@ -2,9 +2,9 @@ import { IsEmail, IsString } from 'class-validator';
 
 export class User {
   @IsString()
-  userId: string;
+  authSchId: string;
   @IsEmail()
   email: string;
   @IsString()
-  userName: string;
+  username: string;
 }
