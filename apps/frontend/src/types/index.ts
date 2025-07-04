@@ -9,7 +9,7 @@ export interface Post {
 }
 
 export interface User {
-  userId: string;
+  authSchId: string;
   email: string;
   username: string;
 }
