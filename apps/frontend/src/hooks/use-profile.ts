@@ -1,10 +1,11 @@
 import useSWR from 'swr';
 import { User } from '@/types';
 import { axiosGetFetcher } from '@/lib/fetchers';
+import { AxiosError } from 'axios';
 
 export default function useProfile(): {
   data: User | undefined;
-  error: any;
+  error: AxiosError;
   isLoading: boolean;
   mutate: () => Promise<User | undefined>;
 } {
