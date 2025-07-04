@@ -36,7 +36,7 @@ export class PostsService {
         include: {
           author: {
             select: {
-              userName: true,
+              username: true,
               email: true,
             },
           },

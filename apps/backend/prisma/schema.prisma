@@ -14,11 +14,11 @@ datasource db {
 }
 
 model User {
-  userId   String    @id
-  email    String    @unique
-  userName String
-  Post     Post[]
-  Comment  Comment[]
+  authSchId String    @id
+  email     String    @unique
+  username  String
+  Post      Post[]
+  Comment   Comment[]
 }
 
 model Post {
@@ -26,7 +26,7 @@ model Post {
   title     String
   content   String
   visible   Boolean   @default(true)
-  author    User?     @relation(fields: [authorId], references: [userId])
+  author    User?     @relation(fields: [authorId], references: [authSchId])
   authorId  String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -41,6 +41,6 @@ model Comment {
   postId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [userId])
+  User      User     @relation(fields: [userId], references: [authSchId])
   userId    String
 }

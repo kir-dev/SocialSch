@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
+import { User } from 'src/users/entities/user.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentEntity } from './entities/comment.entity';
-import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class CommentsService {
@@ -29,8 +30,8 @@ export class CommentsService {
       include: {
         User: {
           select: {
-            userId: true,
-            userName: true,
+            authSchId: true,
+            username: true,
           },
         },
       },
@@ -38,22 +39,22 @@ export class CommentsService {
   }
 
   async findOne(id: number): Promise<CommentEntity> {
-    return await this.prisma.comment.findUnique({
+    return this.prisma.comment.findUnique({
       where: {
         commentId: id,
       },
       include: {
         User: {
           select: {
-            userId: true,
-            userName: true,
+            authSchId: true,
+            username: true,
           },
         },
       },
     });
   }
 
-  async update(id: number, updateCommentDto: UpdateCommentDto): Promise<CommentEntity> {
+  async update(id: number, updateCommentDto: UpdateCommentDto, _user: User): Promise<CommentEntity> {
     return await this.prisma.comment.update({
       where: {
         commentId: id,
