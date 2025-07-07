@@ -1,5 +1,5 @@
 import './globals.css';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeProvider } from '@/components/theme-provider';
 
@@ -25,7 +25,6 @@ export default function RootLayout({
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <SidebarProvider>
             <AppSidebar />
-            <CustomTrigger />
             {children}
           </SidebarProvider>
         </ThemeProvider>

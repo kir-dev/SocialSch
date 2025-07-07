@@ -2,7 +2,7 @@ import PostCard from '@/components/PostCard';
 import type { Post, User } from '@/types';
 
 function findUserById(targetId: string): User {
-  const user = users.find((user) => user.userId === targetId);
+  const user = users.find((user) => user.authSchId === targetId);
   if (!user) {
     throw new Error(`User with ID '${targetId}' not found.`);
   }
@@ -22,22 +22,22 @@ export default function Home() {
 //Just some dummy posts and users
 const users = [
   {
-    userId: 'user_123',
+    authSchId: 'user_123',
     email: 'alice@example.com',
     username: 'alice_dev',
   },
   {
-    userId: 'user_456',
+    authSchId: 'user_456',
     email: 'bob@example.com',
     username: 'bobby_codes',
   },
   {
-    userId: 'user_789',
+    authSchId: 'user_789',
     email: 'barni@example.com',
     username: 'barni_dev',
   },
   {
-    userId: 'user_999',
+    authSchId: 'user_999',
     email: 'charlie@example.com',
     username: 'charliex',
   },

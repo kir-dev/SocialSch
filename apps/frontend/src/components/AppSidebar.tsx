@@ -37,10 +37,10 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar variant='sidebar' collapsible='icon'>
+    <Sidebar variant='inset' collapsible='icon'>
       <SidebarContent>
         <SidebarGroup className='bg-sidebar'>
-          <SidebarGroupLabel className='text-xl pt-6 pb-10'>SocialSch</SidebarGroupLabel>
+          <SidebarGroupLabel className='text-3xl pt-6 pb-10'>SocialSch</SidebarGroupLabel>
           <SidebarGroupContent />
           <SidebarGroupContent>
             <SidebarMenu>
