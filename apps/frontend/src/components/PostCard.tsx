@@ -19,7 +19,7 @@ export default function PostCard({ user, post }: PostProps) {
   }
 
   return (
-    <Card>
+    <Card className='bg-background'>
       <PostHeader user={user} />
       <CardContent>
         <CardTitle className='pb-2 text-xl'>{post.title}</CardTitle>

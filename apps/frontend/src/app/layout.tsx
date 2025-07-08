@@ -25,7 +25,7 @@ export default function RootLayout({
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <SidebarProvider>
             <AppSidebar />
-            {children}
+            <main>{children}</main>
           </SidebarProvider>
         </ThemeProvider>
       </body>
