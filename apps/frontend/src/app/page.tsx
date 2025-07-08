@@ -2,6 +2,8 @@
 import PostCard from '@/components/PostCard';
 import type { Post } from '@/types';
 import usePosts from '@/hooks/use-posts';
+import { SkeletonCard } from '@/components/SkeletonCard';
+
 export default function Home() {
   let { data: posts, isLoading } = usePosts();
 
@@ -15,5 +17,3 @@ export default function Home() {
     </main>
   );
 }
-
-import { SkeletonCard } from '@/components/SkeletonCard';
