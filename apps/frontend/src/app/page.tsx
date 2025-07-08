@@ -8,7 +8,7 @@ export default function Home() {
   let { data: posts, isLoading } = usePosts();
 
   return (
-    <div className='px-4 md:px-8 flex flex-col items-center space-y-6 pt-10'>
+    <div className='px-4 md:px-32 flex flex-col items-center space-y-6 pt-10'>
       {isLoading && <SkeletonCard />}
       {posts &&
         posts.map((post: Post) => {

@@ -2,6 +2,7 @@ import { Home, Search, SquarePlus, CircleUserRound } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -10,6 +11,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { ModeToggle } from '@/components/theme-provider';
+import SideBarCreateButton from '@/components/SideBarCreateButton';
 
 // Menu items.
 const items = [
@@ -61,6 +63,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SideBarCreateButton />
+      </SidebarFooter>
     </Sidebar>
   );
 }
