@@ -85,12 +85,12 @@ export default function CreatePostDialog() {
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant='outline' onClick={() => handleCancel()}>
+              <Button variant='outline' onClick={() => handleCancel()} className='cursor-pointer'>
                 Cancel
               </Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button type='submit' onClick={() => handleCreatePost()}>
+              <Button type='submit' onClick={() => handleCreatePost()} className='cursor-pointer'>
                 Create
               </Button>
             </DialogClose>
