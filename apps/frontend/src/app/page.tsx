@@ -9,6 +9,10 @@ export default function Home() {
 
   if (!posts && !isLoading) return <h1>There are no visible posts. Come back later.</h1>;
 
+  if (posts) {
+    posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
   return (
     <div className='flex flex-col items-center space-y-6 pt-10 pb-10'>
       {isLoading && <SkeletonCard />}
