@@ -10,6 +10,13 @@ export interface Post {
   comments: Comment[];
 }
 
+export interface CreatePost {
+  title: string;
+  content: string;
+  visible: boolean;
+  authorId: string;
+}
+
 export interface User {
   authSchId: string;
   email: string;

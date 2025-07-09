@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { ModeToggle } from '@/components/theme-provider';
-import SideBarCreateButton from '@/components/SideBarCreateButton';
+import SideBarButton from '@/components/SideBarButton';
 
 // Menu items.
 const items = [
@@ -64,7 +64,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SideBarCreateButton />
+        <SideBarButton />
       </SidebarFooter>
     </Sidebar>
   );
