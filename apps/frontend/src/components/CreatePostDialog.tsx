@@ -44,7 +44,7 @@ export default function CreatePostDialog() {
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <button className='bg-[url(/buttonBgImage2.jpg)] bg-cover font-bold text-xl text-white cursor-pointer rounded-2xl px-4 py-2 m-2'>
+          <button className='bg-[url(/buttonBgImage2.jpg)] bg-cover font-bold text-xl text-white cursor-pointer rounded-2xl px-6 py-2 m-2'>
             Create Post
           </button>
         </DialogTrigger>
