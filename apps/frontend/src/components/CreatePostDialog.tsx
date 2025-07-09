@@ -25,7 +25,7 @@ export default function CreatePostDialog() {
   async function handleCreatePost() {
     if (!user) return;
 
-    const response = await axiosPostFetcher<Post, CreatePost>('/posts', {
+    return await axiosPostFetcher<Post, CreatePost>('/posts', {
       arg: {
         title: title,
         content: content,
@@ -73,14 +73,14 @@ export default function CreatePostDialog() {
                 name='content'
                 placeholder='Type your content here...'
                 value={content}
-                className={'min-h-[100px]'}
+                className='min-h-[100px]'
                 onChange={(e) => setContent(e.target.value)}
               />
             </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant={'outline'} onClick={() => handleCancel()}>
+              <Button variant='outline' onClick={() => handleCancel()}>
                 Cancel
               </Button>
             </DialogClose>
