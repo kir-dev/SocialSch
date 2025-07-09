@@ -17,13 +17,15 @@ export default function SideBarButton() {
 
   return (
     <>
-      {/*<CreatePostDialog />*/}
-      <button
-        className='bg-[url(/buttonBgImage2.jpg)] bg-cover font-bold text-xl text-white cursor-pointer rounded-2xl px-4 py-2 m-2'
-        onClick={() => handleLogin()}
-      >
-        <span>Login</span>
-      </button>
+      {user && <CreatePostDialog />}
+      {!user && (
+        <button
+          className='bg-[url(/buttonBgImage2.jpg)] bg-cover font-bold text-xl text-white cursor-pointer rounded-2xl px-4 py-2 m-2'
+          onClick={() => handleLogin()}
+        >
+          <span>Login</span>
+        </button>
+      )}
     </>
   );
 }
