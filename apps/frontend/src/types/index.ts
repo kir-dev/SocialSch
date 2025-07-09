@@ -26,5 +26,6 @@ export interface User {
 export interface Comment {
   commentId: number;
   postId: number;
+  authorId: string;
   content: string;
 }

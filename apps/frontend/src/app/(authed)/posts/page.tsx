@@ -11,6 +11,12 @@ const posts: Post[] = [
     authorId: '',
     createdAt: new Date(),
     updatedAt: new Date(),
+    author: {
+      authSchId: '1',
+      username: 'Author 1',
+      email: 'example@gmail.com',
+    },
+    comments: [],
   },
 ];
 
