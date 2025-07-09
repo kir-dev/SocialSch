@@ -23,14 +23,14 @@ export default function CreatePostDialog() {
   const { data: user } = useProfile();
 
   async function handleCreatePost() {
-    //if (!user) return;
+    if (!user) return;
 
     const response = await axiosPostFetcher<Post, CreatePost>('/posts', {
       arg: {
         title: title,
         content: content,
         visible: true,
-        authorId: '0845cabb-37ce-4b06-a75a-662622334755',
+        authorId: user.authSchId,
       },
     });
   }
@@ -84,9 +84,11 @@ export default function CreatePostDialog() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type='submit' onClick={() => handleCreatePost()}>
-              Create
-            </Button>
+            <DialogClose asChild>
+              <Button type='submit' onClick={() => handleCreatePost()}>
+                Create
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </form>
