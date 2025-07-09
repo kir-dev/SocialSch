@@ -28,7 +28,7 @@ export class CommentsService {
         createdAt: 'desc',
       },
       include: {
-        User: {
+        author: {
           select: {
             authSchId: true,
             username: true,
@@ -44,7 +44,7 @@ export class CommentsService {
         commentId: id,
       },
       include: {
-        User: {
+        author: {
           select: {
             authSchId: true,
             username: true,
@@ -55,7 +55,7 @@ export class CommentsService {
   }
 
   async update(id: number, updateCommentDto: UpdateCommentDto, _user: User): Promise<CommentEntity> {
-    return await this.prisma.comment.update({
+    return this.prisma.comment.update({
       where: {
         commentId: id,
       },

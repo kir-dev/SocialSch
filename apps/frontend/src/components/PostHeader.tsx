@@ -14,7 +14,7 @@ export default function PostHeader({ user }: PostHeaderProps) {
         <CircleUserRound size='32' />
         <div className='flex flex-col pl-1'>
           <CardTitle>{user.username}</CardTitle>
-          <CardDescription>{user.authSchId}</CardDescription>
+          <CardDescription>{user.email}</CardDescription>
         </div>
       </div>
       <Button variant='link' className='p-2'>

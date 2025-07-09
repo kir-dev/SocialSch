@@ -5,7 +5,6 @@ import { ThemeProvider } from '@/components/theme-provider';
 
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { CustomTrigger } from '@/components/CustomTrigger';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,8 +24,7 @@ export default function RootLayout({
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <SidebarProvider>
             <AppSidebar />
-            <CustomTrigger />
-            {children}
+            <main>{children}</main>
           </SidebarProvider>
         </ThemeProvider>
       </body>

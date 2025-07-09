@@ -3,7 +3,7 @@ import { User } from '@/types';
 import { axiosGetFetcher } from '@/lib/fetchers';
 import { AxiosError } from 'axios';
 
-export default function useProfile(id: string): {
+export default function useUser(id: string): {
   data: User | undefined;
   error: AxiosError;
   isLoading: boolean;

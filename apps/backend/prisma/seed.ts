@@ -50,7 +50,7 @@ async function main(): Promise<void> {
           commentId: faker.number.int({ max: 2147483647 }),
           content: faker.lorem.sentence(),
           postId: postId,
-          userId: userIds[faker.number.int({ min: 0, max: userIds.length - 1 })],
+          authorId: userIds[faker.number.int({ min: 0, max: userIds.length - 1 })],
         },
       });
     }

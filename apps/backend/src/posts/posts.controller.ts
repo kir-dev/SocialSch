@@ -3,6 +3,7 @@ import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostEntity } from './entities/post.entity';
+import { PostWithAuthANdCommentDto } from './dto/postwith-auth-comment.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -16,6 +17,11 @@ export class PostsController {
   @Get()
   findAll(): Promise<PostEntity[]> {
     return this.postsService.findAll();
+  }
+
+  @Get('all')
+  findAllWithEveryDetail(): Promise<PostWithAuthANdCommentDto[]> {
+    return this.postsService.getPostWithEveryDetail();
   }
 
   @Get(':id')

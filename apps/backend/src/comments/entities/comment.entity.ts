@@ -7,7 +7,7 @@ export class CommentEntity {
   postId: number;
 
   @IsString()
-  userId: string;
+  authorId: string;
 
   @IsString()
   content: string;

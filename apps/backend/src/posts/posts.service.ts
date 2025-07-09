@@ -5,6 +5,7 @@ import { PrismaService } from 'nestjs-prisma';
 
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { PostEntity } from './entities/post.entity';
+import { PostWithAuthANdCommentDto } from './dto/postwith-auth-comment.dto';
 
 @Injectable()
 export class PostsService {
@@ -14,7 +15,8 @@ export class PostsService {
       data: {
         title: createPostDto.title,
         content: createPostDto.content,
-        ...createPostDto,
+        authorId: createPostDto.authorId,
+        visible: createPostDto.visible,
       },
     });
   }
@@ -23,6 +25,18 @@ export class PostsService {
     return this.prisma.post.findMany({
       where: {
         visible: true,
+      },
+    });
+  }
+
+  async getPostWithEveryDetail(): Promise<PostWithAuthANdCommentDto[]> {
+    return this.prisma.post.findMany({
+      where: {
+        visible: true,
+      },
+      include: {
+        author: true,
+        comments: true,
       },
     });
   }
