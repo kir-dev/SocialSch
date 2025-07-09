@@ -7,6 +7,8 @@ import { SkeletonCard } from '@/components/SkeletonCard';
 export default function Home() {
   let { data: posts, isLoading } = usePosts();
 
+  if (!posts && !isLoading) return <h1>There are no visible posts. Come back later.</h1>;
+
   return (
     <div className='flex flex-col items-center space-y-6 pt-10 pb-10'>
       {isLoading && <SkeletonCard />}
