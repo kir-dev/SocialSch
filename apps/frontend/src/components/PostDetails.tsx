@@ -119,7 +119,7 @@ export function PostDetails({ post, user }: PostDetailsProps) {
               )}
             </div>
           </ScrollArea>
-          <DialogClose asChild></DialogClose>
+          <DialogClose asChild />
         </DialogFooter>
       </DialogContent>
     </Dialog>
