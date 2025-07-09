@@ -16,16 +16,18 @@ import { CreatePost, Post } from '@/types';
 import { axiosPostFetcher } from '@/lib/fetchers';
 import useProfile from '@/hooks/use-profile';
 import { useState } from 'react';
+import usePosts from '@/hooks/use-posts';
 
 export default function CreatePostDialog() {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const { data: user } = useProfile();
+  const { mutate } = usePosts();
 
   async function handleCreatePost() {
     if (!user) return;
 
-    return await axiosPostFetcher<Post, CreatePost>('/posts', {
+    const response = await axiosPostFetcher<Post, CreatePost>('/posts', {
       arg: {
         title: title,
         content: content,
@@ -33,6 +35,9 @@ export default function CreatePostDialog() {
         authorId: user.authSchId,
       },
     });
+
+    await mutate();
+    return response;
   }
 
   function handleCancel() {
