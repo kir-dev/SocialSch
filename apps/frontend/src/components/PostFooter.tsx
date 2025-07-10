@@ -51,7 +51,3 @@ export default function PostFooter({ likeCount, commentCount, createdAt, post, u
     </CardFooter>
   );
 }
-
-/*<Button variant='link' className='text-foreground p-0 cursor-pointer'>
-            Comments
-          </Button>*/
