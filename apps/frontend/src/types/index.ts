@@ -28,4 +28,6 @@ export interface Comment {
   postId: number;
   authorId: string;
   content: string;
+  createdAt: Date;
+  user: User;
 }

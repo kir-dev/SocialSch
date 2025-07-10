@@ -44,7 +44,7 @@ export default function PostFooter({ likeCount, commentCount, createdAt, post, u
         </div>
         <div className='flex flex-row items-center pl-5'>
           <p className='font-bold pr-1 '>{commentCount}</p>
-          <PostDetails post={post} user={user} postId={post.postId} />
+          <PostDetails post={post} user={user} postId={post.postId} comments={post.comments} />
         </div>
       </div>
       <span className='text-foreground/24 text-xs px-2'>{format(createdAt, 'yyyy/MM/dd')}</span>

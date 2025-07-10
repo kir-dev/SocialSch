@@ -11,20 +11,22 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Post, User } from '@/types';
+import { Post, User, Comment } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import PostHeader from '@/components/PostHeader';
 import React from 'react';
+import { format } from 'date-fns';
 
 interface PostDetailsProps {
   post: Post;
   user: User;
   postId: number;
+  comments: Comment[];
 }
 
 // Placeholders
-const comments = [
+/*const comments = [
   {
     id: '1',
     text: 'This is a great post!',
@@ -61,13 +63,15 @@ const comments = [
     },
     createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
   },
-];
+];*/
 
-export function PostDetails({ post, user }: PostDetailsProps) {
+export function PostDetails({ post, user, comments }: PostDetailsProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='outline'>Comments</Button>
+        <Button variant='link' className='text-foreground'>
+          Comments
+        </Button>
       </DialogTrigger>
       <DialogContent
         className='
@@ -100,17 +104,21 @@ export function PostDetails({ post, user }: PostDetailsProps) {
             <div className='p-4'>
               {comments.length > 0 ? (
                 comments.map((comment) => (
-                  <div key={comment.id} className='mb-4'>
+                  <div key={comment.commentId} className='mb-4'>
                     <div className='flex items-center mb-2'>
                       <CircleUserRound size={24} className='mr-2' />
                       <div>
-                        <span className='font-medium'>{comment.user.username}</span>
+                        {comment.user ? (
+                          <span className='font-medium'>{comment.user.username}</span>
+                        ) : (
+                          <span className='font-medium'>Anonymous</span>
+                        )}
                         <span className='text-xs text-muted-foreground ml-2'>
-                          {comment.createdAt.toLocaleDateString()}
+                          {format(comment.createdAt, 'yyyy/MM/dd')}
                         </span>
                       </div>
                     </div>
-                    <p className='text-sm pl-8'>{comment.text}</p>
+                    <p className='text-sm pl-8'>{comment.content}</p>
                   </div>
                 ))
               ) : (
