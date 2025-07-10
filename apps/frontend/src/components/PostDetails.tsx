@@ -20,58 +20,14 @@ import { format } from 'date-fns';
 
 interface PostDetailsProps {
   post: Post;
-  user: User;
-  postId: number;
   comments: Comment[];
 }
 
-// Placeholders
-/*const comments = [
-  {
-    id: '1',
-    text: 'This is a great post!',
-    user: {
-      username: 'user1',
-      userId: 'u1234',
-    },
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '2',
-    text: 'I completely agree with your points!',
-    user: {
-      username: 'user2',
-      userId: 'u5678',
-    },
-    createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
-  },
-  {
-    id: '3',
-    text: 'This is a great post!',
-    user: {
-      username: 'user3',
-      userId: 'u2346',
-    },
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '4',
-    text: 'This is a great post!',
-    user: {
-      username: 'user4',
-      userId: 'u4532',
-    },
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  },
-];*/
-
-export function PostDetails({ post, user, comments }: PostDetailsProps) {
+export function PostDetails({ post, comments }: PostDetailsProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='link' className='text-foreground'>
-          Comments
-        </Button>
+        <button className='text-foreground cursor-pointer text-sm hover:underline'>Comments</button>
       </DialogTrigger>
       <DialogContent
         className='
@@ -88,7 +44,7 @@ export function PostDetails({ post, user, comments }: PostDetailsProps) {
         <div className='flex-1 min-h-0 overflow-y-auto p-6'>
           <Card className='w-full max-w-md '>
             {' '}
-            <PostHeader user={user} />
+            <PostHeader user={post.author} />
             <CardContent>
               <CardTitle className='pb-2 text-xl'>{post.title}</CardTitle>
               <CardDescription className='text-foreground'>{post.content}</CardDescription>

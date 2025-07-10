@@ -42,9 +42,9 @@ export default function PostFooter({ likeCount, commentCount, createdAt, post, u
             <Heart className={isLiked ? 'text-red-600 fill-red-600' : 'text-red-600'} size='16' />
           </Button>
         </div>
-        <div className='flex flex-row items-center pl-5'>
-          <p className='font-bold pr-1 '>{commentCount}</p>
-          <PostDetails post={post} user={user} postId={post.postId} comments={post.comments} />
+        <div className='flex flex-row justify-center items-center pl-5'>
+          <span className='font-bold pr-1'>{commentCount}</span>
+          <PostDetails post={post} comments={post.comments} />
         </div>
       </div>
       <span className='text-foreground/24 text-xs px-2'>{format(createdAt, 'yyyy/MM/dd')}</span>
