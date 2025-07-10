@@ -4,8 +4,18 @@ import { CardFooter } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { PostDetails } from '@/components/PostDetails';
+import { Post, User } from '@/types';
 
-export default function PostFooter({ likeCount, commentCount, createdAt }: PostFooterProps) {
+interface PostFooterProps {
+  likeCount: number;
+  commentCount: number;
+  createdAt: Date;
+  user: User;
+  post: Post;
+}
+
+export default function PostFooter({ likeCount, commentCount, createdAt, post, user }: PostFooterProps) {
   const [likeNumber, setLikeNumber] = useState(likeCount);
   const [isLiked, setIsLiked] = useState(false);
 
@@ -34,9 +44,7 @@ export default function PostFooter({ likeCount, commentCount, createdAt }: PostF
         </div>
         <div className='flex flex-row items-center pl-5'>
           <p className='font-bold pr-1 '>{commentCount}</p>
-          <Button variant='link' className='text-foreground p-0 cursor-pointer'>
-            Comments
-          </Button>
+          <PostDetails post={post} user={user} postId={post.postId} />
         </div>
       </div>
       <span className='text-foreground/24 text-xs px-2'>{format(createdAt, 'yyyy/MM/dd')}</span>
@@ -44,8 +52,6 @@ export default function PostFooter({ likeCount, commentCount, createdAt }: PostF
   );
 }
 
-interface PostFooterProps {
-  likeCount: number;
-  commentCount: number;
-  createdAt: Date;
-}
+/*<Button variant='link' className='text-foreground p-0 cursor-pointer'>
+            Comments
+          </Button>*/

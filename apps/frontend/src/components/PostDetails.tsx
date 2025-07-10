@@ -15,12 +15,12 @@ import { Post, User } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import PostHeader from '@/components/PostHeader';
-import PostFooter from '@/components/PostFooter';
 import React from 'react';
 
 interface PostDetailsProps {
   post: Post;
   user: User;
+  postId: number;
 }
 
 // Placeholders
@@ -67,7 +67,7 @@ export function PostDetails({ post, user }: PostDetailsProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='outline'>Share</Button>
+        <Button variant='outline'>Comments</Button>
       </DialogTrigger>
       <DialogContent
         className='
@@ -89,7 +89,6 @@ export function PostDetails({ post, user }: PostDetailsProps) {
               <CardTitle className='pb-2 text-xl'>{post.title}</CardTitle>
               <CardDescription className='text-foreground'>{post.content}</CardDescription>
             </CardContent>
-            <PostFooter likeCount={123} commentCount={14} createdAt={post.createdAt} />
           </Card>
           <div className='flex flex-row items-center mt-4 w-full max-w-md'>
             <CircleUserRound size='32' className='mr-2' />
