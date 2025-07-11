@@ -36,7 +36,11 @@ export class PostsService {
       },
       include: {
         author: true,
-        comments: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
       },
     });
   }

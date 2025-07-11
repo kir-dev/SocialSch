@@ -17,7 +17,7 @@ export default function SideBarButton() {
       {user && <CreatePostDialog />}
       {!user && (
         <button
-          className='bg-[url(/buttonBgImage2.jpg)] bg-cover font-bold text-xl text-white cursor-pointer rounded-2xl px-6 py-2 m-2'
+          className='bg-[url(/buttonBgImage2.jpg] bg-cover font-bold text-xl text-white cursor-pointer rounded-2xl px-6 py-2 m-2'
           onClick={() => handleLogin()}
         >
           <span>Login</span>

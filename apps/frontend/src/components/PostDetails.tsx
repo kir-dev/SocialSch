@@ -1,6 +1,4 @@
 import { CircleUserRound } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -11,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Post, User, Comment } from '@/types';
+import { Post, Comment } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import PostHeader from '@/components/PostHeader';
@@ -59,24 +57,26 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
           <ScrollArea className=' w-full max-h-64'>
             <div className='p-4'>
               {comments.length > 0 ? (
-                comments.map((comment) => (
-                  <div key={comment.commentId} className='mb-4'>
-                    <div className='flex items-center mb-2'>
-                      <CircleUserRound size={24} className='mr-2' />
-                      <div>
-                        {comment.user ? (
-                          <span className='font-medium'>{comment.user.username}</span>
-                        ) : (
-                          <span className='font-medium'>Anonymous</span>
-                        )}
-                        <span className='text-xs text-muted-foreground ml-2'>
-                          {format(comment.createdAt, 'yyyy/MM/dd')}
-                        </span>
+                comments.map((comment) => {
+                  return (
+                    <div key={comment.commentId} className='mb-4'>
+                      <div className='flex items-center mb-2'>
+                        <CircleUserRound size={24} className='mr-2' />
+                        <div>
+                          {comment.author ? (
+                            <span className='font-medium'>{comment.author.username}</span>
+                          ) : (
+                            <span className='font-medium'>Anonymous</span>
+                          )}
+                          <span className='text-xs text-muted-foreground ml-2'>
+                            {format(comment.createdAt, 'yyyy/MM/dd')}
+                          </span>
+                        </div>
                       </div>
+                      <p className='text-sm pl-8'>{comment.content}</p>
                     </div>
-                    <p className='text-sm pl-8'>{comment.content}</p>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <p className='text-sm text-muted-foreground'>No comments yet</p>
               )}

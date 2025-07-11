@@ -29,5 +29,5 @@ export interface Comment {
   authorId: string;
   content: string;
   createdAt: Date;
-  user: User;
+  author: User;
 }
