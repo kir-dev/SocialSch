@@ -31,3 +31,10 @@ export interface Comment {
   createdAt: Date;
   author: User;
 }
+
+export interface CreateComment {
+  postId: number;
+  authorId: string;
+  content: string;
+  visible: boolean;
+}

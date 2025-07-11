@@ -9,12 +9,17 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Post, Comment } from '@/types';
+import { Post, Comment, CreateComment } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import PostHeader from '@/components/PostHeader';
 import React from 'react';
 import { format } from 'date-fns';
+import useProfile from '@/hooks/use-profile';
+import { useRouter } from 'next/navigation';
+import usePosts from '@/hooks/use-posts';
+import { axiosPostFetcher } from '@/lib/fetchers';
+import { post } from 'axios';
 
 interface PostDetailsProps {
   post: Post;
@@ -22,6 +27,31 @@ interface PostDetailsProps {
 }
 
 export function PostDetails({ post, comments }: PostDetailsProps) {
+  const [commentText, setCommentText] = React.useState<string>('');
+  const { data: user } = useProfile();
+  const router = useRouter();
+  const { mutate } = usePosts();
+
+  async function handleAddComment() {
+    if (!user) {
+      router.push('/unauthorized');
+      return;
+    }
+
+    const response = await axiosPostFetcher<Comment, CreateComment>('/comments', {
+      arg: {
+        postId: post.postId,
+        authorId: user.authSchId,
+        content: commentText,
+        visible: true,
+      },
+    });
+
+    await mutate();
+    setCommentText('');
+    return response;
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -29,18 +59,17 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
       </DialogTrigger>
       <DialogContent
         className='
-          w-[90vw]
-          max-w-[1100px]
-          h-[100vh]
+          min-w-1/2
+          h-5/6
           p-0
           flex flex-col
         '
       >
-        <DialogHeader className='p-6 justify-center items-center'>
-          <DialogTitle>{post.title}</DialogTitle>
+        <DialogHeader className='p-2 pt-6 justify-center items-center'>
+          <DialogTitle className='text-2xl'>{post.author.username}'s Post</DialogTitle>
         </DialogHeader>
-        <div className='flex-1 min-h-0 overflow-y-auto p-6'>
-          <Card className='w-full max-w-md '>
+        <div className='flex flex-col justify-center items-center min-h-0 overflow-y-auto py-2'>
+          <Card className='w-4/5'>
             {' '}
             <PostHeader user={post.author} />
             <CardContent>
@@ -48,9 +77,22 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
               <CardDescription className='text-foreground'>{post.content}</CardDescription>
             </CardContent>
           </Card>
-          <div className='flex flex-row items-center mt-4 w-full max-w-md'>
-            <CircleUserRound size='32' className='mr-2' />
-            <Input className='flex-1' placeholder='Write a comment...' />
+          <div className='flex flex-row items-center justify-between mt-4 w-4/5'>
+            <div className='w-2/3 flex flex-row justify-start items-center'>
+              <CircleUserRound size='32' className='mr-2' />
+              <Input
+                className='flex-1'
+                placeholder='Add a comment...'
+                onChange={(e) => setCommentText(e.target.value)}
+                value={commentText}
+              />
+            </div>
+            <button
+              className='font-sm px-6 py-1 text-background border-2 bg-foreground rounded-xl cursor-pointer'
+              onClick={() => handleAddComment()}
+            >
+              Add
+            </button>
           </div>
         </div>
         <DialogFooter className='p-1 border-t sm:justify-start flex gap-4'>
