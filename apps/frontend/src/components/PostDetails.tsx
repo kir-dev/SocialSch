@@ -19,7 +19,6 @@ import useProfile from '@/hooks/use-profile';
 import { useRouter } from 'next/navigation';
 import usePosts from '@/hooks/use-posts';
 import { axiosPostFetcher } from '@/lib/fetchers';
-import { post } from 'axios';
 
 interface PostDetailsProps {
   post: Post;
@@ -77,6 +76,8 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
               <CardDescription className='text-foreground'>{post.content}</CardDescription>
             </CardContent>
           </Card>
+        </div>
+        <DialogFooter className='!flex !flex-col justify-start items-center'>
           <div className='flex flex-row items-center justify-between mt-4 w-4/5'>
             <div className='w-2/3 flex flex-row justify-start items-center'>
               <CircleUserRound size='32' className='mr-2' />
@@ -88,15 +89,13 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
               />
             </div>
             <button
-              className='font-sm px-6 py-1 text-background border-2 bg-foreground rounded-xl cursor-pointer'
+              className='font-sm px-6 py-1 text-background border-2 bg-foreground rounded-xl cursor-pointer hover:brightness-120'
               onClick={() => handleAddComment()}
             >
               Add
             </button>
           </div>
-        </div>
-        <DialogFooter className='p-1 border-t sm:justify-start flex gap-4'>
-          <ScrollArea className=' w-full max-h-64'>
+          <ScrollArea className='w-full max-h-32'>
             <div className='p-4'>
               {comments.length > 0 ? (
                 comments.map((comment) => {
@@ -124,7 +123,6 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
               )}
             </div>
           </ScrollArea>
-          <DialogClose asChild />
         </DialogFooter>
       </DialogContent>
     </Dialog>
