@@ -5,17 +5,16 @@ import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { PostDetails } from '@/components/PostDetails';
-import { Post, User } from '@/types';
+import { Post } from '@/types';
 
 interface PostFooterProps {
   likeCount: number;
   commentCount: number;
   createdAt: Date;
-  user: User;
   post: Post;
 }
 
-export default function PostFooter({ likeCount, commentCount, createdAt, post, user }: PostFooterProps) {
+export default function PostFooter({ likeCount, commentCount, createdAt, post }: PostFooterProps) {
   const [likeNumber, setLikeNumber] = useState(likeCount);
   const [isLiked, setIsLiked] = useState(false);
 

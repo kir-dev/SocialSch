@@ -1,13 +1,5 @@
 import { CircleUserRound } from 'lucide-react';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Post, Comment, CreateComment } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -65,7 +57,7 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
         '
       >
         <DialogHeader className='p-2 pt-6 justify-center items-center'>
-          <DialogTitle className='text-2xl'>{post.author.username}'s Post</DialogTitle>
+          <DialogTitle className='text-2xl'>{post.author.username}&apos;s Post</DialogTitle>
         </DialogHeader>
         <div className='flex flex-col justify-center items-center min-h-0 overflow-y-auto py-2'>
           <Card className='w-4/5'>

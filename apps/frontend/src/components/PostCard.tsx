@@ -25,13 +25,7 @@ export default function PostCard({ user, post }: PostProps) {
         <CardTitle className='pb-2 text-xl'>{post.title}</CardTitle>
         <CardDescription className='text-foreground'>{post.content}</CardDescription>
       </CardContent>
-      <PostFooter
-        likeCount={123}
-        commentCount={post.comments.length}
-        createdAt={post.createdAt}
-        post={post}
-        user={user}
-      />
+      <PostFooter likeCount={123} commentCount={post.comments.length} createdAt={post.createdAt} post={post} />
     </Card>
   );
 }
