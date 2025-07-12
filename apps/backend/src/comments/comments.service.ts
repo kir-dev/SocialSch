@@ -13,7 +13,9 @@ export class CommentsService {
     return this.prisma.comment.create({
       data: {
         content: createCommentDto.content,
-        ...createCommentDto,
+        postId: createCommentDto.postId,
+        authorId: createCommentDto.authorId,
+        visible: true,
       },
     });
   }

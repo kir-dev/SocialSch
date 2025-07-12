@@ -56,7 +56,6 @@ async function main(): Promise<void> {
     }
   }
 }
-
 main()
   .then(async () => {
     await prisma.$disconnect();
