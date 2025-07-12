@@ -1,8 +1,8 @@
 import { AuthSchProfile } from '@kir-dev/passport-authsch';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'nestjs-prisma';
 import { User } from 'src/users/entities/user.entity';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {

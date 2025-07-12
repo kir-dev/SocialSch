@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { PrismaService } from 'nestjs-prisma';
 
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 import { PostEntity } from './entities/post.entity';
 import { PostWithAuthANdCommentDto } from './dto/postwith-auth-comment.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PostsService {
