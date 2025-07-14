@@ -26,15 +26,6 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
-    try {
-      // Itt még nincs implementálva a hagyományos bejelentkezés a backend-en
-      setError('Ez a funkció jelenleg fejlesztés alatt áll.');
-      setIsLoading(false);
-    } catch (err) {
-      setError('Hibás email vagy jelszó. Kérjük, próbálja újra.');
-      setIsLoading(false);
-    }
   }
 
   function handleAuthSchLogin() {

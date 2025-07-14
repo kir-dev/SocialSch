@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { JWT_COOKIE_NAME } from './app/auth/constanst';
 
-export function middleware(request: NextRequest) {
+export function middleware(request: NextRequest): NextResponse {
   const jwt = request.cookies.get(JWT_COOKIE_NAME)?.value;
   const { pathname } = request.nextUrl;
 

@@ -4,7 +4,6 @@ import './globals.css';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { ThemeProvider } from '@/components/theme-provider';
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { usePathname } from 'next/navigation';
 
