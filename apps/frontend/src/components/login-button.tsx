@@ -2,11 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
-import { LuLogIn, LuUser } from 'react-icons/lu';
+import { LuLogIn, LuLogOut, LuUser } from 'react-icons/lu';
 import useProfile from '@/hooks/use-profile';
+import Cookies from 'js-cookie';
+import { JWT_COOKIE_NAME } from '@/app/auth/constanst';
 
 export default function LoginButton() {
-  const { data: user } = useProfile();
+  const { data: user, mutate } = useProfile();
   const router = useRouter();
 
   function navigateToProfile() {
@@ -14,7 +16,13 @@ export default function LoginButton() {
   }
 
   function navigateToLogin() {
-    router.push(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`);
+    router.push('/login');
+  }
+
+  function handleLogout() {
+    Cookies.remove(JWT_COOKIE_NAME);
+    mutate();
+    router.push('/login');
   }
 
   return (
@@ -22,14 +30,18 @@ export default function LoginButton() {
       {user && (
         <div className='flex gap-2 items-center'>
           <Button onClick={navigateToProfile}>
-            <LuUser />
+            <LuUser className='mr-2' />
+            {user.username || 'Profil'}
+          </Button>
+          <Button variant='outline' onClick={handleLogout}>
+            <LuLogOut className='mr-2' /> Kijelentkezés
           </Button>
         </div>
       )}
       {!user && (
         <Button className='ml-0 max-md:m-2' onClick={navigateToLogin}>
           Bejelentkezés
-          <LuLogIn />
+          <LuLogIn className='ml-2' />
         </Button>
       )}
     </>
