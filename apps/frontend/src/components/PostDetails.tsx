@@ -71,21 +71,33 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
         </div>
         <DialogFooter className='!flex !flex-col justify-start items-center'>
           <div className='flex flex-row items-center justify-between mt-4 w-4/5'>
-            <div className='w-2/3 flex flex-row justify-start items-center'>
+            <div className='w-4/5 flex flex-row justify-start items-center'>
               <CircleUserRound size='32' className='mr-2' />
               <Input
-                className='flex-1'
+                className='flex-1 rounded-xl'
                 placeholder='Add a comment...'
                 onChange={(e) => setCommentText(e.target.value)}
                 value={commentText}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && commentText.trim() !== '') {
+                    e.preventDefault();
+                    handleAddComment();
+                  }
+                }}
               />
+              <button
+                type='submit'
+                className={`font-sm px-6 py-1 text-background border-2 rounded-xl ${
+                  commentText.trim() === ''
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-foreground cursor-pointer hover:brightness-120'
+                }`}
+                onClick={() => handleAddComment()}
+                disabled={commentText.trim() === ''}
+              >
+                Add
+              </button>
             </div>
-            <button
-              className='font-sm px-6 py-1 text-background border-2 bg-foreground rounded-xl cursor-pointer hover:brightness-120'
-              onClick={() => handleAddComment()}
-            >
-              Add
-            </button>
           </div>
           <ScrollArea className='w-full max-h-32'>
             <div className='p-4'>
