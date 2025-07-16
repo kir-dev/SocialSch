@@ -1,8 +1,7 @@
 import { CircleUserRound, Pencil, Trash2 } from 'lucide-react';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Post, Comment, CreateComment } from '@/types';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import PostHeader from '@/components/PostHeader';
 import React, { useState } from 'react';
