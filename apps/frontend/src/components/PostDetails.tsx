@@ -5,12 +5,12 @@ import { Post, Comment, CreateComment } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import PostHeader from '@/components/PostHeader';
-import React from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import useProfile from '@/hooks/use-profile';
 import { useRouter } from 'next/navigation';
 import usePosts from '@/hooks/use-posts';
-import { axiosPostFetcher, axiosDeleteFetcher } from '@/lib/fetchers';
+import { axiosPostFetcher, axiosDeleteFetcher, axiosPatchFetcher } from '@/lib/fetchers';
 
 interface PostDetailsProps {
   post: Post;
@@ -22,7 +22,23 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
   const { data: user } = useProfile();
   const router = useRouter();
   const { mutate } = usePosts();
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editedContent, setEditedContent] = useState<string>('');
 
+  // Mentésért felelős logika
+  async function handleSaveComment() {
+    if (!user) {
+      router.push('/unauthorized');
+      return;
+    }
+
+    const payload = { content: editedContent };
+    await axiosPatchFetcher(`/comments/${editingCommentId}`, { arg: payload });
+    await mutate();
+    setEditingCommentId(null);
+  }
+
+  //Törlésért felelős logika
   async function handleDeleteComment(commentId: number) {
     if (!user) {
       router.push('/unauthorized');
@@ -112,38 +128,82 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
           <div className='p-4'>
             {comments.length > 0 ? (
               comments.map((comment) => {
+                //Ezzel nézzük meg hogy az aktuális kommentet szerkesztjük-e
+                const isEditing = editingCommentId === comment.commentId;
                 return (
                   <div
                     key={comment.commentId}
                     className='bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-3 items-start group'
                   >
-                    <div className='flex items-center'>
-                      <CircleUserRound size={24} className='mr-2' />
+                    {isEditing ? (
+                      // ----- SZERKESZTÉSI NÉZET -----
                       <div>
-                        {comment.author ? (
-                          <span className='font-medium'>{comment.author.username}</span>
-                        ) : (
-                          <span className='font-medium'>Anonymous</span>
-                        )}
-                        <span className='text-xs text-muted-foreground ml-2'>
-                          {format(comment.createdAt, 'yyyy/MM/dd')}
-                        </span>
-                        <button
-                          className='p-1 text-muted-foreground hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity'
-                          aria-label='Edit comment'
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteComment(comment.commentId)}
-                          className='p-1 text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity'
-                          aria-label='Delete comment'
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <Input
+                          value={editedContent}
+                          onChange={(e) => setEditedContent(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSaveComment();
+                            if (e.key === 'Escape') setEditingCommentId(null);
+                          }}
+                          autoFocus
+                          className='mb-2 bg-white dark:bg-gray-900'
+                        />
+                        <div className='flex items-center gap-4'>
+                          <button
+                            onClick={handleSaveComment}
+                            className='text-sm font-semibold text-blue-600 hover:underline'
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingCommentId(null)}
+                            className='text-sm text-gray-500 hover:underline'
+                          >
+                            Undo
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <p className='text-sm pl-8 pt-1.5'>{comment.content}</p>
+                    ) : (
+                      // ----- MEGJELENÍTÉSI NÉZET -----
+                      <div>
+                        <div className='flex items-center justify-between'>
+                          <div className='flex items-center'>
+                            <CircleUserRound size={24} className='mr-2' />
+                            <div>
+                              <span className='font-medium'>{comment.author?.username || 'Anonymous'}</span>
+                              <span className='text-xs text-muted-foreground ml-2'>
+                                {format(new Date(comment.createdAt), 'yyyy/MM/dd')}
+                              </span>
+                            </div>
+                          </div>
+                          {/* Ez azért nagyon pacek mert ha minden jó akkor a gombok csak a saját kommenteknél jelennek meg*/}
+                          {user?.authSchId === comment.author?.authSchId && (
+                            <div className='flex items-center opacity-0 group-hover:opacity-100 transition-opacity'>
+                              <button
+                                onClick={() => {
+                                  // Szerkesztési mód be
+                                  setEditingCommentId(comment.commentId);
+                                  // Input mező feltöltése
+                                  setEditedContent(comment.content);
+                                }}
+                                className='p-1 text-muted-foreground hover:text-blue-500'
+                                aria-label='Edit comment'
+                              >
+                                <Pencil size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteComment(comment.commentId)}
+                                className='p-1 text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity'
+                                aria-label='Delete comment'
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <p className='text-sm pl-8 pt-1.5'>{comment.content}</p>
+                      </div>
+                    )}
                   </div>
                 );
               })
