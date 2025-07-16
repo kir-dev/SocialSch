@@ -15,7 +15,7 @@ export async function axiosPatchFetcher<T, U>(url: string, { arg }: { arg: U }):
   return response.data;
 }
 
-export async function axiosDeleteFetcher<T, U>(url: string): Promise<T> {
+export async function axiosDeleteFetcher<T>(url: string): Promise<T> {
   const response = await api.delete(url);
   return response.data;
 }
