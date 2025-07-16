@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import useProfile from '@/hooks/use-profile';
 import { useRouter } from 'next/navigation';
 import usePosts from '@/hooks/use-posts';
-import { axiosPostFetcher } from '@/lib/fetchers';
+import { axiosPostFetcher, axiosDeleteFetcher } from '@/lib/fetchers';
 
 interface PostDetailsProps {
   post: Post;
@@ -22,6 +22,17 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
   const { data: user } = useProfile();
   const router = useRouter();
   const { mutate } = usePosts();
+
+  async function handleDeleteComment(commentId: number) {
+    if (!user) {
+      router.push('/unauthorized');
+      return;
+    }
+
+    const response = await axiosDeleteFetcher(`/comments/${commentId}`);
+    await mutate();
+    return response;
+  }
 
   async function handleAddComment() {
     if (!user) {
@@ -97,7 +108,7 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
             </button>
           </div>
         </div>
-        <div className='flex-1 min-h-0 overflow-y-auto p-4'>
+        <div className='flex-1 min-h-0 overflow-y-auto p-4 border-t'>
           <div className='p-4'>
             {comments.length > 0 ? (
               comments.map((comment) => {
@@ -124,6 +135,7 @@ export function PostDetails({ post, comments }: PostDetailsProps) {
                           <Pencil size={16} />
                         </button>
                         <button
+                          onClick={() => handleDeleteComment(comment.commentId)}
                           className='p-1 text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity'
                           aria-label='Delete comment'
                         >
