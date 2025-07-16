@@ -1,5 +1,4 @@
 import api from './axios';
-import axios from 'axios';
 
 export async function axiosGetFetcher<T>(url: string): Promise<T> {
   const response = await api.get(url);
