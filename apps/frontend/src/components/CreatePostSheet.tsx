@@ -65,7 +65,7 @@ export function CreatePostSheet() {
           <SheetTitle>Create Post</SheetTitle>
           <SheetDescription>Add title and content for your post. Click create when you&apos;re done.</SheetDescription>
         </SheetHeader>
-        <div className='grid gap-4 py-4'>
+        <div className='grid gap-4 py-4 px-4'>
           <div className='grid gap-3'>
             <Label htmlFor='title'>Title</Label>
             <Input
@@ -76,7 +76,7 @@ export function CreatePostSheet() {
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
-          <div className='grid gap-3'>
+          <div className='grid gap-3 px-1.5'>
             <Label htmlFor='content'>Content</Label>
             <Textarea
               id='content'
