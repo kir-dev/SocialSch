@@ -16,7 +16,7 @@ export default function Home() {
 
   return (
     <div className='flex flex-col items-center space-y-6 pt-10 pb-10'>
-      <CreatePostSheet />
+      {/*<CreatePostSheet />*/}
       {isLoading && <SkeletonCard />}
       {posts &&
         posts.map((post: Post) => {
