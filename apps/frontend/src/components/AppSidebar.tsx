@@ -9,8 +9,18 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { ModeToggle } from '@/components/theme-provider';
+import useProfile from '@/hooks/use-profile';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import NavUser from '@/components/nav-user';
 
 // Menu items.
 const items = [
@@ -29,10 +39,21 @@ const items = [
     url: '/signup',
     icon: SquarePlus,
   },
-  {
+  /*{
     title: 'Profile',
     url: '/profile',
     icon: CircleUserRound,
+  },*/
+];
+
+const dropDownItems = [
+  {
+    title: 'Profile',
+    url: '/profile',
+  },
+  {
+    title: 'Sign out',
+    url: '/auth/signout',
   },
 ];
 
@@ -55,14 +76,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              <SidebarMenuItem>
+              {/*<SidebarMenuItem>
                 <ModeToggle />
-              </SidebarMenuItem>
+              </SidebarMenuItem>*/}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
     </Sidebar>
   );
 }
