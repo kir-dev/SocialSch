@@ -3,7 +3,6 @@ import PostCard from '@/components/PostCard';
 import type { Post } from '@/types';
 import usePosts from '@/hooks/use-posts';
 import { SkeletonCard } from '@/components/SkeletonCard';
-import { CreatePostSheet } from '@/components/CreatePostSheet';
 
 export default function Home() {
   let { data: posts, isLoading } = usePosts();

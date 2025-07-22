@@ -12,7 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { JSX, useState } from 'react';
+import { useState } from 'react';
 import useProfile from '@/hooks/use-profile';
 import usePosts from '@/hooks/use-posts';
 import { axiosPostFetcher } from '@/lib/fetchers';
