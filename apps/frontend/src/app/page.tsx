@@ -47,7 +47,7 @@ export default function Home() {
           className='w-4/5'
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-        ></Input>
+        />
         <Button variant='outline' className='cursor-pointer' onClick={() => handleSubmit()}>
           {clicked ? 'Cancel' : 'Search'}
         </Button>
