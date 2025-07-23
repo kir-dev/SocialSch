@@ -33,14 +33,14 @@ export default function Home() {
     }
     let searchedData = posts?.filter((post) => post.title.toLowerCase().includes(filter.toLowerCase()));
 
-    if (searchedData) {
+    if (searchedData && searchedData.length > 0) {
       setFilteredData(searchedData);
     }
   }
 
   return (
-    <div className='w-full min-w-full flex flex-col items-center space-y-6 pt-10 pb-10'>
-      <div className='flex w-3/5 min-w-3/5 items-center gap-2'>
+    <div className='bg-transparent w-full min-w-full flex flex-col items-center space-y-6 pt-10 pb-10'>
+      <div className='bg-transparent flex w-3/5 min-w-3/5 items-center gap-2'>
         <Input
           type='text'
           placeholder='Search SocialSch'
@@ -55,14 +55,14 @@ export default function Home() {
 
       {isLoading && <SkeletonCard />}
       {filteredData.length === 0 && posts && (
-        <div className='flex flex-col w-full items-center gap-2'>
+        <div className='bg-transparent flex flex-col w-full items-center gap-2'>
           {posts.map((post: Post) => {
             return <PostCard key={post.postId} post={post} user={post.author} />;
           })}
         </div>
       )}
       {filteredData.length !== 0 && (
-        <div className='flex flex-col w-full items-center gap-2'>
+        <div className='bg-transparent flex flex-col w-full items-center gap-2'>
           {filteredData.map((post: Post) => {
             return <PostCard key={post.postId} post={post} user={post.author} />;
           })}
