@@ -62,14 +62,14 @@ export default function Home() {
       {filteredData.length === 0 && posts && (
         <div className='bg-transparent flex flex-col w-full items-center gap-4'>
           {posts.map((post: Post) => {
-            return <PostCard key={post.postId} post={post} user={post.author} />;
+            return <PostCard key={post.postId} post={post} user={post.author} account={false} />;
           })}
         </div>
       )}
       {filteredData.length !== 0 && (
         <div className='bg-transparent flex flex-col w-full items-center gap-4'>
           {filteredData.map((post: Post) => {
-            return <PostCard key={post.postId} post={post} user={post.author} />;
+            return <PostCard key={post.postId} post={post} user={post.author} account={false} />;
           })}
         </div>
       )}

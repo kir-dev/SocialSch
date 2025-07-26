@@ -6,10 +6,11 @@ import { Post, User } from '@/types';
 interface PostProps {
   user: User | undefined;
   post: Post;
+  account: boolean;
 }
 
 //Posts should contain like and comment count in the future, two hardcoded value for now
-export default function PostCard({ user, post }: PostProps) {
+export default function PostCard({ user, post, account }: PostProps) {
   if (!user) {
     user = {
       authSchId: '11undefined11',
@@ -20,7 +21,7 @@ export default function PostCard({ user, post }: PostProps) {
 
   return (
     <Card className='bg-background w-4/5 min-w-4/5'>
-      <PostHeader user={user} />
+      {!account && <PostHeader user={user} />}
       <CardContent>
         <CardTitle className='pb-2 text-xl'>{post.title}</CardTitle>
         <CardDescription className='text-foreground'>{post.content}</CardDescription>
