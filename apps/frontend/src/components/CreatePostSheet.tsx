@@ -12,14 +12,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { CircleUserRound } from 'lucide-react';
 import { useState } from 'react';
 import useProfile from '@/hooks/use-profile';
 import usePosts from '@/hooks/use-posts';
 import { axiosPostFetcher } from '@/lib/fetchers';
 import { CreatePost, Post } from '@/types';
+import { SquarePlus } from 'lucide-react';
 
-export function CreatePostSheet() {
+interface Props {
+  triggerTitle: string;
+}
+
+export function CreatePostSheet({ triggerTitle }: Props) {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const { data: user } = useProfile();
@@ -54,10 +58,8 @@ export function CreatePostSheet() {
     <Sheet>
       <SheetTrigger asChild>
         <div className='flex flex-row items-center w-4/5 gap-2'>
-          <CircleUserRound size='32' />
-          <Button className='flex-1 rounded-2xl' variant='outline'>
-            Do you want to write a post?
-          </Button>
+          <SquarePlus size={16} />
+          <span className='text-[16px]'>{triggerTitle}</span>
         </div>
       </SheetTrigger>
       <SheetContent className='min-w-2/5'>
@@ -65,7 +67,7 @@ export function CreatePostSheet() {
           <SheetTitle>Create Post</SheetTitle>
           <SheetDescription>Add title and content for your post. Click create when you&apos;re done.</SheetDescription>
         </SheetHeader>
-        <div className='grid gap-4 py-4'>
+        <div className='grid gap-4 py-4 px-4'>
           <div className='grid gap-3'>
             <Label htmlFor='title'>Title</Label>
             <Input
@@ -76,7 +78,7 @@ export function CreatePostSheet() {
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
-          <div className='grid gap-3'>
+          <div className='grid gap-3 px-1.5'>
             <Label htmlFor='content'>Content</Label>
             <Textarea
               id='content'

@@ -1,4 +1,4 @@
-import { Home, Search, SquarePlus, CircleUserRound } from 'lucide-react';
+import { Home, Search, SquarePlus } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -10,7 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { ModeToggle } from '@/components/theme-provider';
+import NavUser from '@/components/nav-user';
+import { CreatePostSheet } from '@/components/CreatePostSheet';
 
 // Menu items.
 const items = [
@@ -29,11 +30,6 @@ const items = [
     url: '/signup',
     icon: SquarePlus,
   },
-  {
-    title: 'Profile',
-    url: '/profile',
-    icon: CircleUserRound,
-  },
 ];
 
 export function AppSidebar() {
@@ -47,22 +43,28 @@ export function AppSidebar() {
             <SidebarMenu className='space-y-1'>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon size={32} />
-                      <span className='text-[16px]'>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
+                  {item.title === 'Create' && (
+                    <SidebarMenuButton className='cursor-pointer'>
+                      <CreatePostSheet triggerTitle={item.title} />
+                    </SidebarMenuButton>
+                  )}
+                  {item.title !== 'Create' && (
+                    <SidebarMenuButton asChild className='cursor-pointer'>
+                      <a href={item.url}>
+                        <item.icon size={32} />
+                        <span className='text-[16px]'>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  )}
                 </SidebarMenuItem>
               ))}
-              <SidebarMenuItem>
-                <ModeToggle />
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
     </Sidebar>
   );
 }
