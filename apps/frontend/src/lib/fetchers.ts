@@ -14,3 +14,8 @@ export async function axiosPatchFetcher<T, U>(url: string, { arg }: { arg: U }):
   const response = await api.patch(url, arg);
   return response.data;
 }
+
+export async function axiosDeleteFetcher<T>(url: string): Promise<T> {
+  const response = await api.delete(url);
+  return response.data;
+}
