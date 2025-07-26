@@ -47,6 +47,11 @@ export default function Home() {
           className='w-4/5'
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSubmit();
+            }
+          }}
         />
         <Button variant='outline' className='cursor-pointer' onClick={() => handleSubmit()}>
           {clicked ? 'Cancel' : 'Search'}
@@ -55,14 +60,14 @@ export default function Home() {
 
       {isLoading && <SkeletonCard />}
       {filteredData.length === 0 && posts && (
-        <div className='bg-transparent flex flex-col w-full items-center gap-2'>
+        <div className='bg-transparent flex flex-col w-full items-center gap-4'>
           {posts.map((post: Post) => {
             return <PostCard key={post.postId} post={post} user={post.author} />;
           })}
         </div>
       )}
       {filteredData.length !== 0 && (
-        <div className='bg-transparent flex flex-col w-full items-center gap-2'>
+        <div className='bg-transparent flex flex-col w-full items-center gap-4'>
           {filteredData.map((post: Post) => {
             return <PostCard key={post.postId} post={post} user={post.author} />;
           })}
