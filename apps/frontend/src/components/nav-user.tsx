@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { BadgeCheck, LogOut } from 'lucide-react';
 import useProfile from '@/hooks/use-profile';
 import Link from 'next/link';
+import { ModeToggle } from '@/components/theme-provider';
 
 export function NavUser() {
   const { data: user } = useProfile();
@@ -44,7 +45,7 @@ export function NavUser() {
           >
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Link href='/profile' className='flex flex-row items-center'>
+                <Link href='/account' className='flex flex-row items-center'>
                   <BadgeCheck className='mr-2' />
                   Account
                 </Link>
@@ -56,6 +57,10 @@ export function NavUser() {
                 <LogOut className='mr-2' />
                 Log out
               </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <ModeToggle />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
