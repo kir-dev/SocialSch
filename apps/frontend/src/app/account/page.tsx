@@ -49,7 +49,9 @@ export default function AccountPage() {
         </div>
         <Separator className='my-4 max-w-3xs' />
         <div className='flex h-5 items-center space-x-4 text-sm mb-12'>
-          <div className='text-lg cursor-pointer hover:underline'>Posts</div>
+          <div className='text-lg cursor-pointer hover:underline' onClick={() => setCommentsCLick(false)}>
+            Posts
+          </div>
           <Separator orientation='vertical' />
           <div
             className='text-lg cursor-pointer hover:underline'
