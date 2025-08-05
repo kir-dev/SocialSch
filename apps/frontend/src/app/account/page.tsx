@@ -61,10 +61,14 @@ export default function AccountPage() {
           </div>
         </div>
         {commentsCLick && (
-          <div className='min-w-full grid grid-cols-2 gap-4'>{<AccountComments userComments={userComments} />}</div>
+          <div className='min-w-full grid grid-cols-2 gap-4'>
+            <AccountComments userComments={userComments} />
+          </div>
         )}
         {!commentsCLick && (
-          <div className='min-w-full grid grid-cols-2 gap-4'>{<AccountPosts userPosts={userPosts} />}</div>
+          <div className='min-w-full grid grid-cols-2 gap-4'>
+            <AccountPosts userPosts={userPosts} />
+          </div>
         )}
       </div>
     </div>
