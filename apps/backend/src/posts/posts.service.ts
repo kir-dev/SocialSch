@@ -45,6 +45,23 @@ export class PostsService {
     });
   }
 
+  async findPostsByAuthorId(authorId: string): Promise<PostEntity[]> {
+    return this.prisma.post.findMany({
+      where: {
+        authorId: authorId,
+        visible: true,
+      },
+      include: {
+        author: true,
+        comments: {
+          include: {
+            author: true,
+          },
+        },
+      },
+    });
+  }
+
   async findOne(id: number): Promise<PostEntity> {
     try {
       return await this.prisma.post.findUniqueOrThrow({

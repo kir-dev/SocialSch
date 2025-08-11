@@ -9,12 +9,13 @@ import AccountComments from '@/components/accountComments';
 import AccountPosts from '@/components/accountPosts';
 import { useState } from 'react';
 import useCommentsByAuthor from '@/hooks/use-commentsByAuthor';
+import usePostsByAuthor from '@/hooks/use-postsByAuthor';
 
 export default function AccountPage() {
   const { data: user } = useProfile();
-  const { data: posts } = usePosts();
 
   const userId = user?.authSchId ?? '';
+  const { data: posts } = usePostsByAuthor(userId);
   const { data: comments } = useCommentsByAuthor(userId);
 
   const [commentsCLick, setCommentsCLick] = useState(false);
