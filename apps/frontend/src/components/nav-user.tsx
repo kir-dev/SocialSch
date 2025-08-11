@@ -44,7 +44,7 @@ export function NavUser() {
             sideOffset={4}
           >
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link href='/account' className='flex flex-row items-center'>
                   <BadgeCheck className='mr-2' />
                   Account
@@ -52,7 +52,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href='/auth/signout' className='flex flex-row items-center'>
                 <LogOut className='mr-2' />
                 Log out
