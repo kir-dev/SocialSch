@@ -61,6 +61,9 @@ export class CommentsService {
       where: {
         authorId: authorId,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
