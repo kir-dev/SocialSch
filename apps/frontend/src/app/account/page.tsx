@@ -1,10 +1,8 @@
 'use client';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import useProfile from '@/hooks/use-profile';
-import usePosts from '@/hooks/use-posts';
 import type { Post, Comment } from '@/types';
 import { Separator } from '@/components/ui/separator';
-import useComments from '@/hooks/use-comments';
 import AccountComments from '@/components/accountComments';
 import AccountPosts from '@/components/accountPosts';
 import { useState } from 'react';
