@@ -28,6 +28,11 @@ export class CommentsController {
     return this.commentsService.findOne(+id);
   }
 
+  @Get('/author/:id')
+  findCommentsByAuthorId(@Param('id') id: string): Promise<CommentEntity[]> {
+    return this.commentsService.findCommentsByAuthorId(id);
+  }
+
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
