@@ -21,10 +21,10 @@ export default function AccountPage() {
   let userPosts: Post[] = [];
   let userComments: Comment[] = [];
   if (posts) {
-    userPosts = posts.filter((post) => post.authorId === user?.authSchId);
+    userPosts = posts;
   }
   if (comments) {
-    userComments = comments.filter((comment) => comment.authorId === user?.authSchId);
+    userComments = comments;
   }
 
   if (!user) {
