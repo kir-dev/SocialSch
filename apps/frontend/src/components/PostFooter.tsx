@@ -16,7 +16,7 @@ interface PostFooterProps {
   post: Post;
 }
 
-export default function PostFooter({ likeCount, commentCount, createdAt, post }: PostFooterProps) {
+export default function PostFooter({ likeCount, commentCount, createdAt, post }: Readonly<PostFooterProps>) {
   const [likeNumber, setLikeNumber] = useState(likeCount);
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,21 +24,17 @@ export default function PostFooter({ likeCount, commentCount, createdAt, post }:
 
   useEffect(() => {
     if (user) {
-      const checkLikeStatus = async () => {
+      const fetchLikeStatus = async () => {
         try {
-          // Like számának lekérése
-          const countResponse = await api.get(`/likes/count/${post.postId}`);
-          setLikeNumber(countResponse.data);
-
-          // Ellenőrizzük, hogy a felhasználó kedvelte-e már a posztot
-          const hasLikedResponse = await api.get(`/likes/user-liked/${user.authSchId}/${post.postId}`);
-          setIsLiked(hasLikedResponse.data);
+          // Combined API call to get both like count and user like status
+          const response = await api.get(`/likes/status/${user.authSchId}/${post.postId}`);
+          setLikeNumber(response.data.count);
+          setIsLiked(response.data.liked);
         } catch (error) {
           console.error('Error checking like status:', error);
         }
       };
-
-      checkLikeStatus();
+      fetchLikeStatus();
     }
   }, [user, post.postId]);
 
