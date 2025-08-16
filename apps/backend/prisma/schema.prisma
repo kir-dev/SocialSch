@@ -21,6 +21,7 @@ model User {
   username  String
   posts     Post[]
   comments  Comment[]
+  likes     Like[]
 }
 
 model Post {
@@ -33,6 +34,7 @@ model Post {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   comments  Comment[]
+  likes     Like[]
 }
 
 model Comment {
@@ -45,4 +47,16 @@ model Comment {
   updatedAt DateTime @updatedAt
   author    User     @relation(fields: [authorId], references: [authSchId])
   authorId  String
+}
+
+model Like {
+  likeId       Int      @id @default(autoincrement())
+  userId String
+  user User @relation(fields: [userId], references: [authSchId])
+  postId Int
+  post Post @relation(fields: [postId], references: [postId], onDelete: Cascade)
+
+  @@unique([userId, postId])
+
+
 }

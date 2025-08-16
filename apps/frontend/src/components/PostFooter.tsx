@@ -3,9 +3,12 @@ import { Heart } from 'lucide-react';
 import { CardFooter } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PostDetails } from '@/components/PostDetails';
 import { Post } from '@/types';
+import { useAuth } from '@/hooks/use-auth';
+import api from '@/lib/axios';
+import { mutate as swrMutate } from 'swr';
 
 interface PostFooterProps {
   likeCount: number;
@@ -14,17 +17,63 @@ interface PostFooterProps {
   post: Post;
 }
 
-export default function PostFooter({ likeCount, commentCount, createdAt, post }: PostFooterProps) {
+export default function PostFooter({ likeCount, commentCount, createdAt, post }: Readonly<PostFooterProps>) {
   const [likeNumber, setLikeNumber] = useState(likeCount);
   const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
-  function toggleLike() {
-    if (isLiked) {
-      setLikeNumber(likeCount);
-      setIsLiked(false);
-    } else {
-      setLikeNumber(likeCount + 1);
-      setIsLiked(true);
+  useEffect(() => {
+    setLikeNumber(likeCount);
+  }, [likeCount]);
+
+  useEffect(() => {
+    if (user) {
+      const fetchLikeStatus = async () => {
+        try {
+          const response = await api.get(`/likes/user-liked/${user.authSchId}/${post.postId}`);
+          setIsLiked(response.data);
+        } catch (error) {
+          console.error('Error checking like status:', error);
+        }
+      };
+      fetchLikeStatus();
+    }
+  }, [user, post.postId]);
+
+  async function toggleLike() {
+    if (!user) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await api.post('/likes/toggle', {
+        userId: user.authSchId,
+        postId: post.postId,
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setLikeNumber(response.data.count);
+        setIsLiked(response.data.liked);
+
+        const countKey = `/likes/count/${post.postId}`;
+        swrMutate(countKey, response.data.count, { revalidate: false });
+
+        const totalKey = `/likes/total/user/${user.authSchId}`;
+        swrMutate(
+          totalKey,
+          (prev: number | undefined) => (response.data.liked ? (prev ?? 0) + 1 : Math.max(0, (prev ?? 0) - 1)),
+          { revalidate: false }
+        );
+
+        swrMutate(totalKey);
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -35,8 +84,9 @@ export default function PostFooter({ likeCount, commentCount, createdAt, post }:
           <p className='font-bold pr-1'>{likeNumber}</p>
           <Button
             className='bg-transparent p-0 cursor-pointer border-0 shadow-none hover:bg-transparent focus:bg-transparent active:bg-transparent'
-            asChild
-            onClick={() => toggleLike()}
+            onClick={toggleLike}
+            disabled={isLoading}
+            variant='ghost'
           >
             <Heart className={isLiked ? 'text-red-600 fill-red-600' : 'text-red-600'} size='16' />
           </Button>
