@@ -1,28 +1,30 @@
 'use client';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import useProfile from '@/hooks/use-profile';
-import usePosts from '@/hooks/use-posts';
 import type { Post, Comment } from '@/types';
 import { Separator } from '@/components/ui/separator';
-import useComments from '@/hooks/use-comments';
 import AccountComments from '@/components/accountComments';
 import AccountPosts from '@/components/accountPosts';
 import { useState } from 'react';
+import useCommentsByAuthor from '@/hooks/use-commentsByAuthor';
+import usePostsByAuthor from '@/hooks/use-postsByAuthor';
 
 export default function AccountPage() {
   const { data: user } = useProfile();
-  const { data: posts } = usePosts();
-  const { data: comments } = useComments();
+
+  const userId = user?.authSchId ?? '';
+  const { data: posts } = usePostsByAuthor(userId);
+  const { data: comments } = useCommentsByAuthor(userId);
 
   const [commentsCLick, setCommentsCLick] = useState(false);
 
   let userPosts: Post[] = [];
   let userComments: Comment[] = [];
   if (posts) {
-    userPosts = posts.filter((post) => post.authorId === user?.authSchId);
+    userPosts = posts;
   }
   if (comments) {
-    userComments = comments.filter((comment) => comment.authorId === user?.authSchId);
+    userComments = comments;
   }
 
   if (!user) {

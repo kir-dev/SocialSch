@@ -29,6 +29,11 @@ export class PostsController {
     return this.postsService.findOne(+id);
   }
 
+  @Get('/author/:id')
+  findPostByAuthorId(@Param('id') id: string): Promise<PostEntity[]> {
+    return this.postsService.findPostsByAuthorId(id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto): Promise<PostEntity> {
     return this.postsService.update(+id, updatePostDto);
