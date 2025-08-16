@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           ) : (
             <SidebarProvider>
               <AppSidebar />
-              <main>{children}</main>
+              <main className='min-w-4/5 min-h-screen'>{children}</main>
             </SidebarProvider>
           )}
         </ThemeProvider>
