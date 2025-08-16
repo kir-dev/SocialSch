@@ -8,6 +8,7 @@ import { PostDetails } from '@/components/PostDetails';
 import { Post } from '@/types';
 import { useAuth } from '@/hooks/use-auth';
 import api from '@/lib/axios';
+import { mutate as swrMutate } from 'swr';
 
 interface PostFooterProps {
   likeCount: number;
@@ -23,13 +24,15 @@ export default function PostFooter({ likeCount, commentCount, createdAt, post }:
   const { user } = useAuth();
 
   useEffect(() => {
+    setLikeNumber(likeCount);
+  }, [likeCount]);
+
+  useEffect(() => {
     if (user) {
       const fetchLikeStatus = async () => {
         try {
-          // Combined API call to get both like count and user like status
-          const response = await api.get(`/likes/status/${user.authSchId}/${post.postId}`);
-          setLikeNumber(response.data.count);
-          setIsLiked(response.data.liked);
+          const response = await api.get(`/likes/user-liked/${user.authSchId}/${post.postId}`);
+          setIsLiked(response.data);
         } catch (error) {
           console.error('Error checking like status:', error);
         }
@@ -54,6 +57,18 @@ export default function PostFooter({ likeCount, commentCount, createdAt, post }:
       if (response.status === 200 || response.status === 201) {
         setLikeNumber(response.data.count);
         setIsLiked(response.data.liked);
+
+        const countKey = `/likes/count/${post.postId}`;
+        swrMutate(countKey, response.data.count, { revalidate: false });
+
+        const totalKey = `/likes/total/user/${user.authSchId}`;
+        swrMutate(
+          totalKey,
+          (prev: number | undefined) => (response.data.liked ? (prev ?? 0) + 1 : Math.max(0, (prev ?? 0) - 1)),
+          { revalidate: false }
+        );
+
+        swrMutate(totalKey);
       }
     } catch (error) {
       console.error('Error toggling like:', error);

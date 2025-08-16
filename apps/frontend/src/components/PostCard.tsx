@@ -2,29 +2,16 @@ import PostHeader from '@/components/PostHeader';
 import PostFooter from '@/components/PostFooter';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import { Post, User } from '@/types';
-import { useEffect, useState } from 'react';
-import api from '@/lib/axios';
+import useLikeCount from '@/hooks/use-like-count';
 
 interface PostProps {
   user: User | undefined;
   post: Post;
+  account?: boolean;
 }
 
 export default function PostCard({ user, post }: Readonly<PostProps>) {
-  const [likeCount, setLikeCount] = useState(0);
-
-  useEffect(() => {
-    const fetchLikeCount = async () => {
-      try {
-        const response = await api.get(`/likes/count/${post.postId}`);
-        setLikeCount(response.data);
-      } catch (error) {
-        console.error('Error fetching like count:', error);
-      }
-    };
-
-    fetchLikeCount();
-  }, [post.postId]);
+  const { data: likeCount } = useLikeCount(post.postId);
 
   user ??= {
     authSchId: '11undefined11',
@@ -39,7 +26,12 @@ export default function PostCard({ user, post }: Readonly<PostProps>) {
         <CardTitle className='pb-2 text-xl'>{post.title}</CardTitle>
         <CardDescription className='text-foreground'>{post.content}</CardDescription>
       </CardContent>
-      <PostFooter likeCount={likeCount} commentCount={post.comments.length} createdAt={post.createdAt} post={post} />
+      <PostFooter
+        likeCount={likeCount ?? 0}
+        commentCount={post.comments.length}
+        createdAt={post.createdAt}
+        post={post}
+      />
     </Card>
   );
 }

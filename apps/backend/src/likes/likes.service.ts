@@ -6,7 +6,7 @@ import { Like } from './entities/like.entity';
 
 @Injectable()
 export class LikesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createLikeDto: CreateLikeDto): Promise<Like> {
     const { userId, postId } = createLikeDto;
@@ -64,6 +64,12 @@ export class LikesService {
   }
 
   async remove(id: number): Promise<void> {
+    const like = await this.prisma.like.findUnique({
+      where: { likeId: id },
+    });
+    if (!like) {
+      throw new NotFoundException(`Like with ID ${id} not found`);
+    }
     await this.prisma.like.delete({
       where: { likeId: id },
     });
@@ -121,5 +127,15 @@ export class LikesService {
     });
 
     return !!like;
+  }
+
+  async getUserTotalLikes(userId: string): Promise<number> {
+    return this.prisma.like.count({
+      where: {
+        post: {
+          authorId: userId,
+        },
+      },
+    });
   }
 }

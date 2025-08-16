@@ -48,4 +48,9 @@ export class LikesController {
   async hasUserLikedPost(@Param('userId') userId: string, @Param('postId') postId: string): Promise<boolean> {
     return this.likesService.hasUserLikedPost(userId, +postId);
   }
+
+  @Get('total/user/:userId')
+  getUserTotalLikes(@Param('userId') userId: string): Promise<number> {
+    return this.likesService.getUserTotalLikes(userId);
+  }
 }
