@@ -10,7 +10,7 @@ interface PostProps {
   post: Post;
 }
 
-export default function PostCard({ user, post }: PostProps) {
+export default function PostCard({ user, post }: Readonly<PostProps>) {
   const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
@@ -26,13 +26,11 @@ export default function PostCard({ user, post }: PostProps) {
     fetchLikeCount();
   }, [post.postId]);
 
-  if (!user) {
-    user = {
-      authSchId: '11undefined11',
-      username: 'undefined',
-      email: 'undefined@gmail.com',
-    };
-  }
+  user ??= {
+    authSchId: '11undefined11',
+    username: 'undefined',
+    email: 'undefined@gmail.com',
+  };
 
   return (
     <Card className='bg-background w-4/5'>
