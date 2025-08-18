@@ -1,1 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';import { FollowsService } from './follows.service';import { CreateFollowDto } from './dto/create-follow.dto';import { UpdateFollowDto } from './dto/update-follow.dto';@Controller('follows')export class FollowsController {  constructor(private readonly followsService: FollowsService) {}  @Post()  create(@Body() createFollowDto: CreateFollowDto) {    return this.followsService.create(createFollowDto);  }  @Get()  findAll() {    return this.followsService.findAll();  }  @Get(':id')  findOne(@Param('id') id: string) {    return this.followsService.findOne(+id);  }  @Patch(':id')  update(@Param('id') id: string, @Body() updateFollowDto: UpdateFollowDto) {    return this.followsService.update(+id, updateFollowDto);  }  @Delete(':id')  remove(@Param('id') id: string) {    return this.followsService.remove(+id);  }}
+import { Controller, Get, Post, Delete, Param, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
+import { FollowsService } from './follows.service';
+
+interface AuthenticatedRequest extends Request {
+  user: {
+    authSchId: string;
+  };
+}
+
+@UseGuards()
+@Controller('follows')
+export class FollowsController {
+  constructor(private readonly followsService: FollowsService) {}
+
+  // List the IDs I am following (for button state)
+  @Get('ids')
+  async myFollowingIds(@Req() req: AuthenticatedRequest): Promise<string[]> {
+    return this.followsService.followingIds(req.user.authSchId);
+  }
+
+  // List users I follow
+  @Get('following/:userId')
+  async followingOf(
+    @Param('userId') userId: string
+  ): Promise<{ following: { authSchId: string; username: string; email: string } }[]> {
+    return this.followsService.followingOf(userId);
+  }
+
+  // List users who follow me
+  @Get('followers/:userId')
+  async followersOf(
+    @Param('userId') userId: string
+  ): Promise<{ follower: { authSchId: string; username: string; email: string } }[]> {
+    return this.followsService.followersOf(userId);
+  }
+
+  // Follow target
+  @Post(':targetId')
+  async follow(@Param('targetId') targetId: string, @Req() req: AuthenticatedRequest): Promise<{ ok: boolean }> {
+    await this.followsService.follow(req.user.authSchId, targetId);
+    return { ok: true };
+  }
+
+  // Unfollow target
+  @Delete(':targetId')
+  async unfollow(@Param('targetId') targetId: string, @Req() req: AuthenticatedRequest): Promise<{ ok: boolean }> {
+    await this.followsService.unfollow(req.user.authSchId, targetId);
+    return { ok: true };
+  }
+}
