@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Delete, Param, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { FollowsService } from './follows.service';
+import { AuthGuard } from '@nestjs/passport';
 
 interface AuthenticatedRequest extends Request {
   user: {
@@ -8,7 +9,7 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
-@UseGuards()
+@UseGuards(AuthGuard('jwt'))
 @Controller('follows')
 export class FollowsController {
   constructor(private readonly followsService: FollowsService) {}
