@@ -12,23 +12,21 @@ interface PostHeaderProps {
 
 export default function PostHeader({ user }: Readonly<PostHeaderProps>) {
   const { data: me } = useProfile();
-  const { ids: myFollowingIds } = useMyFollowingIds(Boolean(me));
+  const { ids: myFollowingIds, isLoading: idsLoading } = useMyFollowingIds(Boolean(me));
   const isMe = me?.authSchId === user.authSchId;
 
-  const isInitiallyFollowed = useMemo(
-    () => (isMe ? false : myFollowingIds.includes(user.authSchId)),
-    [isMe, myFollowingIds, user.authSchId]
-  );
+  const followed = useMemo(() => {
+    if (!me || isMe) return false;
+    return myFollowingIds.includes(user.authSchId);
+  }, [me, isMe, myFollowingIds, user.authSchId]);
 
-  const [optimisticFollowed, setOptimisticFollowed] = useState<boolean | null>(null);
-  const followed = optimisticFollowed ?? isInitiallyFollowed;
+  const [submitting, setSubmitting] = useState(false);
 
   const toggleFollow = async () => {
-    if (!me || isMe) return;
-    const next = !followed;
-    setOptimisticFollowed(next);
+    if (!me || isMe || submitting) return;
+    setSubmitting(true);
     try {
-      if (next) {
+      if (!followed) {
         await followUserOptimistic(me.authSchId, {
           authSchId: user.authSchId,
           username: user.username,
@@ -37,9 +35,8 @@ export default function PostHeader({ user }: Readonly<PostHeaderProps>) {
       } else {
         await unfollowUserOptimistic(me.authSchId, user.authSchId);
       }
-    } catch (_e) {
-      setOptimisticFollowed(!next);
-      console.error('Error toggling follow:', _e);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -52,11 +49,13 @@ export default function PostHeader({ user }: Readonly<PostHeaderProps>) {
           <CardDescription>{user.email}</CardDescription>
         </div>
       </div>
-      {!isMe && (
+      {!isMe && !idsLoading && (
         <Button
           variant='link'
-          className={`p-2 ${followed ? 'text-muted-foreground pointer-events-auto' : ''}`}
+          className={`p-2 ${followed ? 'text-muted-foreground' : ''}`}
           onClick={toggleFollow}
+          disabled={submitting}
+          aria-pressed={followed}
         >
           {followed ? 'Followed' : 'Follow'}
         </Button>

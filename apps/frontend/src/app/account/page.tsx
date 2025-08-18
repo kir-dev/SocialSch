@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -83,24 +83,18 @@ export default function AccountPage() {
   const { ids: myFollowingIds, isLoading: followingIdsLoading } = useMyFollowingIds(Boolean(me));
   const isMe = !!viewedUser && me?.authSchId === viewedUser.authSchId;
 
-  const isInitiallyFollowed = useMemo(() => {
+  const followed = useMemo(() => {
     if (!viewedUser || isMe) return false;
     return myFollowingIds.includes(viewedUser.authSchId);
   }, [viewedUser, isMe, myFollowingIds]);
 
-  const [optimisticFollowed, setOptimisticFollowed] = useState<boolean | null>(null);
-  const followed = optimisticFollowed ?? isInitiallyFollowed;
-
-  useEffect(() => {
-    setOptimisticFollowed(null);
-  }, [viewedUser?.authSchId]);
+  const [submitting, setSubmitting] = useState(false);
 
   const toggleFollow = async () => {
-    if (!me || !viewedUser || isMe) return;
-    const next = !followed;
-    setOptimisticFollowed(next);
+    if (!me || !viewedUser || isMe || submitting) return;
+    setSubmitting(true);
     try {
-      if (next) {
+      if (!followed) {
         await followUserOptimistic(me.authSchId, {
           authSchId: viewedUser.authSchId,
           username: viewedUser.username,
@@ -109,13 +103,12 @@ export default function AccountPage() {
       } else {
         await unfollowUserOptimistic(me.authSchId, viewedUser.authSchId);
       }
-    } catch {
-      setOptimisticFollowed(!next);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const [showComments, setShowComments] = useState(false);
-  const canShowFollowButton = !isMe && !followingIdsLoading;
 
   if (viewId && !viewedUser) {
     return <div className='min-w-full w-full flex justify-center pt-16'>Loading...</div>;
@@ -166,11 +159,13 @@ export default function AccountPage() {
             </div>
           </div>
 
-          {!isMe && canShowFollowButton && (
+          {!isMe && !followingIdsLoading && (
             <Button
               variant={followed ? 'outline' : 'default'}
               className={followed ? 'text-muted-foreground' : ''}
               onClick={toggleFollow}
+              disabled={submitting}
+              aria-pressed={followed}
             >
               {followed ? 'Followed' : 'Follow'}
             </Button>
