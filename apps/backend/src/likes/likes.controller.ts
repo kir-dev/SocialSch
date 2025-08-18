@@ -1,10 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  ValidationPipe,
+  ParseIntPipe,
+  UsePipes,
+} from '@nestjs/common';
 import { LikesService } from './likes.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
 import { Like } from './entities/like.entity';
 
 @Controller('likes')
+@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class LikesController {
   constructor(private readonly likesService: LikesService) {}
 
@@ -19,34 +33,39 @@ export class LikesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Like> {
-    return this.likesService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Like> {
+    return this.likesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLikeDto: UpdateLikeDto): Promise<Like> {
-    return this.likesService.update(+id, updateLikeDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateLikeDto: UpdateLikeDto): Promise<Like> {
+    return this.likesService.update(id, updateLikeDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string): Promise<void> {
-    return this.likesService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.likesService.remove(id);
   }
 
   @Post('toggle')
-  toggleLike(@Body() data: { userId: string; postId: number }): Promise<{ liked: boolean; count: number }> {
+  toggleLike(
+    @Body(ValidationPipe) data: { userId: string; postId: number }
+  ): Promise<{ liked: boolean; count: number }> {
     return this.likesService.toggleLike(data.userId, data.postId);
   }
 
   @Get('count/:postId')
-  getLikeCount(@Param('postId') postId: string): Promise<number> {
-    return this.likesService.getLikeCount(+postId);
+  getLikeCount(@Param('postId', ParseIntPipe) postId: number): Promise<number> {
+    return this.likesService.getLikeCount(postId);
   }
 
   @Get('user-liked/:userId/:postId')
-  async hasUserLikedPost(@Param('userId') userId: string, @Param('postId') postId: string): Promise<boolean> {
-    return this.likesService.hasUserLikedPost(userId, +postId);
+  async hasUserLikedPost(
+    @Param('userId') userId: string,
+    @Param('postId', ParseIntPipe) postId: number
+  ): Promise<boolean> {
+    return this.likesService.hasUserLikedPost(userId, postId);
   }
 
   @Get('total/user/:userId')
