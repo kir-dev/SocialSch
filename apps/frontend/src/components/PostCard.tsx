@@ -5,19 +5,13 @@ import { Post, User } from '@/types';
 import useLikeCount from '@/hooks/use-like-count';
 
 interface PostProps {
-  user: User | undefined;
+  user: User;
   post: Post;
   account?: boolean;
 }
 
 export default function PostCard({ user, post }: Readonly<PostProps>) {
   const { data: likeCount } = useLikeCount(post.postId);
-
-  user ??= {
-    authSchId: '11undefined11',
-    username: 'undefined',
-    email: 'undefined@gmail.com',
-  };
 
   return (
     <Card className='bg-background w-4/5'>
