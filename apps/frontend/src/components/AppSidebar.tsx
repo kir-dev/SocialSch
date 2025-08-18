@@ -105,7 +105,7 @@ export function AppSidebar() {
 
                       {filteredFollowing.length === 0 && (
                         <SidebarMenuItem>
-                          <div className='px-2 py-1 text-sm text-muted-foreground'>No following</div>
+                          <div className='px-2 py-1 text-sm text-muted-foreground'>You follow no one</div>
                         </SidebarMenuItem>
                       )}
                     </SidebarMenu>
@@ -140,7 +140,7 @@ export function AppSidebar() {
                       ))}
                       {filteredFollowers.length === 0 && (
                         <SidebarMenuItem>
-                          <div className='px-2 py-1 text-sm text-muted-foreground'>No followers</div>
+                          <div className='px-2 py-1 text-sm text-muted-foreground'>No one follows you</div>
                         </SidebarMenuItem>
                       )}
                     </SidebarMenu>
