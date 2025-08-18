@@ -3,14 +3,22 @@ import { axiosGetFetcher } from '@/lib/fetchers';
 import api from '@/lib/axios';
 import { FollowEdge, User } from '@/types';
 
-export function useMyFollowingIds(enabled: boolean) {
+export function useMyFollowingIds(enabled: boolean): {
+  ids: string[];
+  isLoading: boolean;
+  error: unknown;
+} {
   const { data, error, isLoading } = useSWR<string[]>(enabled ? '/follows/ids' : null, axiosGetFetcher, {
     shouldRetryOnError: false,
   });
   return { ids: data ?? [], isLoading, error };
 }
 
-export function useFollowingList(userId?: string) {
+export function useFollowingList(userId?: string): {
+  users: FollowEdge['following'][];
+  isLoading: boolean;
+  error: unknown;
+} {
   const key = userId ? `/follows/following/${userId}` : null;
   const { data, error, isLoading } = useSWR<{ following: FollowEdge['following'] }[]>(key, axiosGetFetcher, {
     shouldRetryOnError: false,
@@ -22,7 +30,11 @@ export function useFollowingList(userId?: string) {
   };
 }
 
-export function useFollowersList(userId?: string) {
+export function useFollowersList(userId?: string): {
+  users: FollowEdge['follower'][];
+  isLoading: boolean;
+  error: unknown;
+} {
   const key = userId ? `/follows/followers/${userId}` : null;
   const { data, error, isLoading } = useSWR<{ follower: FollowEdge['follower'] }[]>(key, axiosGetFetcher, {
     shouldRetryOnError: false,
@@ -34,7 +46,10 @@ export function useFollowersList(userId?: string) {
   };
 }
 
-export async function followUserOptimistic(meId: string, target: Pick<User, 'authSchId' | 'username' | 'email'>) {
+export async function followUserOptimistic(
+  meId: string,
+  target: Pick<User, 'authSchId' | 'username' | 'email'>
+): Promise<void> {
   const idsKey = '/follows/ids';
   const followingKey = `/follows/following/${meId}`;
   const followersKey = `/follows/followers/${target.authSchId}`;
@@ -78,7 +93,7 @@ export async function followUserOptimistic(meId: string, target: Pick<User, 'aut
   }
 }
 
-export async function unfollowUserOptimistic(meId: string, targetId: string) {
+export async function unfollowUserOptimistic(meId: string, targetId: string): Promise<void> {
   const idsKey = '/follows/ids';
   const followingKey = `/follows/following/${meId}`;
   const followersKey = `/follows/followers/${targetId}`;
