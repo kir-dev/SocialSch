@@ -3,7 +3,7 @@ import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User } from '@/types';
 import useProfile from '@/hooks/use-profile';
-import { useMyFollowingIds, followUser, unfollowUser } from '@/hooks/use-follows';
+import { useMyFollowingIds, followUserOptimistic, unfollowUserOptimistic } from '@/hooks/use-follows';
 import { useState, useMemo } from 'react';
 
 interface PostHeaderProps {
@@ -29,14 +29,17 @@ export default function PostHeader({ user }: Readonly<PostHeaderProps>) {
     setOptimisticFollowed(next);
     try {
       if (next) {
-        await followUser(user.authSchId);
+        await followUserOptimistic(me.authSchId, {
+          authSchId: user.authSchId,
+          username: user.username,
+          email: user.email,
+        });
       } else {
-        await unfollowUser(user.authSchId);
+        await unfollowUserOptimistic(me.authSchId, user.authSchId);
       }
-    } catch (e) {
-      // revert on error
+    } catch (_e) {
       setOptimisticFollowed(!next);
-      console.error('Failed to update follow status:', e);
+      console.error('Error toggling follow:', _e);
     }
   };
 
