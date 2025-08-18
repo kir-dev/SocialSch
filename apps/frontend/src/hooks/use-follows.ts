@@ -3,6 +3,8 @@ import { axiosGetFetcher } from '@/lib/fetchers';
 import api from '@/lib/axios';
 import { FollowEdge, User } from '@/types';
 
+type UserIdentity = Pick<User, 'authSchId' | 'username' | 'email'>;
+
 export function useMyFollowingIds(enabled: boolean): {
   ids: string[];
   isLoading: boolean;
@@ -46,10 +48,7 @@ export function useFollowersList(userId?: string): {
   };
 }
 
-export async function followUserOptimistic(
-  meId: string,
-  target: Pick<User, 'authSchId' | 'username' | 'email'>
-): Promise<void> {
+export async function followUserOptimistic(meId: string, target: UserIdentity): Promise<void> {
   const idsKey = '/follows/ids';
   const followingKey = `/follows/following/${meId}`;
   const followersKey = `/follows/followers/${target.authSchId}`;
@@ -77,7 +76,7 @@ export async function followUserOptimistic(
 
   await mutate(
     followersKey,
-    (curr: { follower: Pick<User, 'authSchId' | 'username' | 'email'> }[] | undefined) => {
+    (curr: { follower: UserIdentity }[] | undefined) => {
       const meEdge = { follower: { authSchId: meId, username: 'You', email: '' } }; // a backend revalidáláskor pontosítja
       const list = curr ?? [];
       const exists = list.some((r) => r.follower?.authSchId === meId);
@@ -102,15 +101,14 @@ export async function unfollowUserOptimistic(meId: string, targetId: string): Pr
 
   await mutate(
     followingKey,
-    (curr: { following: Pick<User, 'authSchId' | 'username' | 'email'> }[] | undefined) =>
+    (curr: { following: UserIdentity }[] | undefined) =>
       (curr ?? []).filter((r) => r.following?.authSchId !== targetId),
     false
   );
 
   await mutate(
     followersKey,
-    (curr: { follower: Pick<User, 'authSchId' | 'username' | 'email'> }[] | undefined) =>
-      (curr ?? []).filter((r) => r.follower?.authSchId !== meId),
+    (curr: { follower: UserIdentity }[] | undefined) => (curr ?? []).filter((r) => r.follower?.authSchId !== meId),
     false
   );
 
