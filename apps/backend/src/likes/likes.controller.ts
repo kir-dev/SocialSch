@@ -1,0 +1,75 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  ValidationPipe,
+  ParseIntPipe,
+  UsePipes,
+} from '@nestjs/common';
+import { LikesService } from './likes.service';
+import { CreateLikeDto } from './dto/create-like.dto';
+import { UpdateLikeDto } from './dto/update-like.dto';
+import { Like } from './entities/like.entity';
+
+@Controller('likes')
+@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+export class LikesController {
+  constructor(private readonly likesService: LikesService) {}
+
+  @Post()
+  create(@Body() createLikeDto: CreateLikeDto): Promise<Like> {
+    return this.likesService.create(createLikeDto);
+  }
+
+  @Get()
+  findAll(): Promise<Like[]> {
+    return this.likesService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Like> {
+    return this.likesService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateLikeDto: UpdateLikeDto): Promise<Like> {
+    return this.likesService.update(id, updateLikeDto);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.likesService.remove(id);
+  }
+
+  @Post('toggle')
+  toggleLike(
+    @Body(ValidationPipe) data: { userId: string; postId: number }
+  ): Promise<{ liked: boolean; count: number }> {
+    return this.likesService.toggleLike(data.userId, data.postId);
+  }
+
+  @Get('count/:postId')
+  getLikeCount(@Param('postId', ParseIntPipe) postId: number): Promise<number> {
+    return this.likesService.getLikeCount(postId);
+  }
+
+  @Get('user-liked/:userId/:postId')
+  async hasUserLikedPost(
+    @Param('userId') userId: string,
+    @Param('postId', ParseIntPipe) postId: number
+  ): Promise<boolean> {
+    return this.likesService.hasUserLikedPost(userId, postId);
+  }
+
+  @Get('total/user/:userId')
+  getUserTotalLikes(@Param('userId') userId: string): Promise<number> {
+    return this.likesService.getUserTotalLikes(userId);
+  }
+}
