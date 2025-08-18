@@ -96,12 +96,13 @@ export function AppSidebar() {
                       {filteredFollowing.map((u) => (
                         <SidebarMenuItem key={u.authSchId}>
                           <SidebarMenuButton asChild className='cursor-pointer'>
-                            <a href={`/users/${u.authSchId}`}>
+                            <a href={`/account?id=${u.authSchId}`}>
                               <span className='text-[14px]'>{u.username}</span>
                             </a>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       ))}
+
                       {filteredFollowing.length === 0 && (
                         <SidebarMenuItem>
                           <div className='px-2 py-1 text-sm text-muted-foreground'>No following</div>
