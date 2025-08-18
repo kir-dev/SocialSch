@@ -57,16 +57,21 @@ export default function AccountPage() {
         </div>
         <Separator className='my-4 max-w-3xs' />
         <div className='flex h-5 items-center space-x-4 text-sm mb-12'>
-          <div className='text-lg cursor-pointer hover:underline' onClick={() => setCommentsCLick(false)}>
+          <button
+            className='text-lg cursor-pointer hover:underline bg-transparent border-none p-0'
+            onClick={() => setCommentsCLick(false)}
+            onKeyDown={(e) => e.key === 'Enter' && setCommentsCLick(false)}
+          >
             Posts
-          </div>
+          </button>
           <Separator orientation='vertical' />
-          <div
-            className='text-lg cursor-pointer hover:underline'
+          <button
+            className='text-lg cursor-pointer hover:underline bg-transparent border-none p-0'
             onClick={() => setCommentsCLick((prevState) => !prevState)}
+            onKeyDown={(e) => e.key === 'Enter' && setCommentsCLick((prevState) => !prevState)}
           >
             Comments
-          </div>
+          </button>
         </div>
         {commentsCLick && (
           <div className='min-w-full grid grid-cols-2 gap-4'>
