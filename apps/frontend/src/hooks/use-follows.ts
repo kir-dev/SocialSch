@@ -34,17 +34,12 @@ export function useFollowersList(userId?: string) {
   };
 }
 
-/**
- * Optimista követés:
- * - azonnal hozzáadja a targetId-t az ids listához
- * - azonnal hozzáadja a target usert a /follows/following/:meId listához
- */
 export async function followUserOptimistic(meId: string, target: Pick<User, 'authSchId' | 'username' | 'email'>) {
   const idsKey = '/follows/ids';
   const followingKey = `/follows/following/${meId}`;
+  const followersKey = `/follows/followers/${target.authSchId}`;
 
-  // Optimista frissítés az ids kulcsra
-  mutate(
+  await mutate(
     idsKey,
     (curr: string[] | undefined) => {
       const set = new Set(curr ?? []);
@@ -54,8 +49,7 @@ export async function followUserOptimistic(meId: string, target: Pick<User, 'aut
     false
   );
 
-  // Optimista frissítés a following listára
-  mutate(
+  await mutate(
     followingKey,
     (curr: { following: typeof target }[] | undefined) => {
       const list = curr ?? [];
@@ -66,35 +60,48 @@ export async function followUserOptimistic(meId: string, target: Pick<User, 'aut
     false
   );
 
+  await mutate(
+    followersKey,
+    (curr: { follower: Pick<User, 'authSchId' | 'username' | 'email'> }[] | undefined) => {
+      const meEdge = { follower: { authSchId: meId, username: 'You', email: '' } }; // a backend revalidáláskor pontosítja
+      const list = curr ?? [];
+      const exists = list.some((r) => r.follower?.authSchId === meId);
+      return exists ? list : [meEdge, ...list];
+    },
+    false
+  );
+
   try {
     await api.post(`/follows/${target.authSchId}`);
   } finally {
-    // Revalidate, hogy konzisztens legyen
-    await Promise.all([mutate(idsKey), mutate(followingKey)]);
+    await Promise.all([mutate(idsKey), mutate(followingKey), mutate(followersKey)]);
   }
 }
 
-/**
- * Optimista kikövetés:
- * - azonnal eltávolítja a targetId-t az ids listából
- * - azonnal eltávolítja a target usert a /follows/following/:meId listából
- */
 export async function unfollowUserOptimistic(meId: string, targetId: string) {
   const idsKey = '/follows/ids';
   const followingKey = `/follows/following/${meId}`;
+  const followersKey = `/follows/followers/${targetId}`;
 
-  mutate(idsKey, (curr: string[] | undefined) => (curr ?? []).filter((id) => id !== targetId), false);
+  await mutate(idsKey, (curr: string[] | undefined) => (curr ?? []).filter((id) => id !== targetId), false);
 
-  mutate(
+  await mutate(
     followingKey,
     (curr: { following: Pick<User, 'authSchId' | 'username' | 'email'> }[] | undefined) =>
       (curr ?? []).filter((r) => r.following?.authSchId !== targetId),
     false
   );
 
+  await mutate(
+    followersKey,
+    (curr: { follower: Pick<User, 'authSchId' | 'username' | 'email'> }[] | undefined) =>
+      (curr ?? []).filter((r) => r.follower?.authSchId !== meId),
+    false
+  );
+
   try {
     await api.delete(`/follows/${targetId}`);
   } finally {
-    await Promise.all([mutate(idsKey), mutate(followingKey)]);
+    await Promise.all([mutate(idsKey), mutate(followingKey), mutate(followersKey)]);
   }
 }

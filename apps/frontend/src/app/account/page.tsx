@@ -14,7 +14,13 @@ import useComments from '@/hooks/use-comments';
 import usePostsByAuthor from '@/hooks/use-postsByAuthor';
 import useCommentsByAuthor from '@/hooks/use-commentsByAuthor';
 
-import { useMyFollowingIds, followUserOptimistic, unfollowUserOptimistic } from '@/hooks/use-follows';
+import {
+  useMyFollowingIds,
+  useFollowersList,
+  useFollowingList,
+  followUserOptimistic,
+  unfollowUserOptimistic,
+} from '@/hooks/use-follows';
 
 import AccountPosts from '@/components/accountPosts';
 import AccountComments from '@/components/accountComments';
@@ -28,9 +34,9 @@ export default function AccountPage() {
   const viewId = searchParams.get('id') || null;
 
   // Saját profil
-  const { data: me } = useProfile();
+  const { data: me, isLoading: profileLoading } = useProfile();
 
-  // Ellenőrizzük, hogy a megjelenített user az aktuális felhasználó-e
+  // Én vagyok-e vagy sem check
   const isViewingMe = !viewId || viewId === me?.authSchId;
 
   // Globális listák (saját profil nézethez)
@@ -68,8 +74,13 @@ export default function AccountPage() {
     { shouldRetryOnError: false }
   );
 
-  // Követés gomb
-  const { ids: myFollowingIds } = useMyFollowingIds(Boolean(me));
+  // Following/Followers számok (a megjelenített userhez)
+  const { users: followingUsers } = useFollowingList(viewedUser?.authSchId);
+  const { users: followerUsers } = useFollowersList(viewedUser?.authSchId);
+  const followingCount = followingUsers.length;
+  const followersCount = followerUsers.length;
+
+  const { ids: myFollowingIds, isLoading: followingIdsLoading } = useMyFollowingIds(Boolean(me));
   const isMe = !!viewedUser && me?.authSchId === viewedUser.authSchId;
 
   const isInitiallyFollowed = useMemo(() => {
@@ -80,7 +91,6 @@ export default function AccountPage() {
   const [optimisticFollowed, setOptimisticFollowed] = useState<boolean | null>(null);
   const followed = optimisticFollowed ?? isInitiallyFollowed;
 
-  // Ha a megjelenített user változik, nullázzuk az optimista állapotot
   useEffect(() => {
     setOptimisticFollowed(null);
   }, [viewedUser?.authSchId]);
@@ -104,10 +114,16 @@ export default function AccountPage() {
     }
   };
 
-  // Nézet váltó (Posts / Comments)
   const [showComments, setShowComments] = useState(false);
+  const canShowFollowButton = !isMe && !followingIdsLoading;
 
-  // Üres / tiltott állapot
+  if (viewId && !viewedUser) {
+    return <div className='min-w-full w-full flex justify-center pt-16'>Loading...</div>;
+  }
+  if (!viewId && profileLoading && !viewedUser) {
+    return <div className='min-w-full w-full flex justify-center pt-16'>Loading...</div>;
+  }
+
   if (!viewedUser) {
     return (
       <div className='min-w-full w-full flex justify-center pt-16 text-red-600 font-bold text-2xl'>
@@ -130,18 +146,27 @@ export default function AccountPage() {
             <div className='flex flex-col'>
               <span className='text-2xl md:text-3xl font-semibold'>{viewedUser.username}</span>
               <span className='text-muted-foreground'>{viewedUser.email}</span>
-              <div className='mt-3 flex gap-6 text-sm md:text-base'>
+
+              <div className='mt-4 grid grid-cols-3 gap-4 text-sm md:text-base'>
                 <div>
                   <span className='font-semibold'>{userPosts.length}</span> posts
                 </div>
                 <div>
                   <span className='font-semibold'>{totalLikes ?? 0}</span> likes
                 </div>
+                <div className='flex gap-4'>
+                  <span title='Following'>
+                    <span className='font-semibold'>{followingCount}</span> following
+                  </span>
+                  <span title='Followers'>
+                    <span className='font-semibold'>{followersCount}</span> followers
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {!isMe && (
+          {!isMe && canShowFollowButton && (
             <Button
               variant={followed ? 'outline' : 'default'}
               className={followed ? 'text-muted-foreground' : ''}
