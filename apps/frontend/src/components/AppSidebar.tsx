@@ -43,11 +43,11 @@ export function AppSidebar() {
   const [openFollowers, setOpenFollowers] = useState(false);
 
   const filteredFollowing = useMemo(
-    () => (followingUsers ?? []).filter((u): u is NonNullable<typeof u> => Boolean(u) && u.authSchId !== me?.authSchId),
+    () => (followingUsers ?? []).filter((u): u is NonNullable<typeof u> => u != null && u.authSchId !== me?.authSchId),
     [followingUsers, me?.authSchId]
   );
   const filteredFollowers = useMemo(
-    () => (followerUsers ?? []).filter((u): u is NonNullable<typeof u> => Boolean(u) && u.authSchId !== me?.authSchId),
+    () => (followerUsers ?? []).filter((u): u is NonNullable<typeof u> => u != null && u.authSchId !== me?.authSchId),
     [followerUsers, me?.authSchId]
   );
 
