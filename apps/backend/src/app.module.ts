@@ -11,6 +11,7 @@ import { LoggerMiddleware } from './common/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { LikesModule } from './likes/likes.module';
+import { FollowsModule } from './follows/follows.module';
 
 import configuration from './config/configuration';
 
@@ -28,6 +29,7 @@ import configuration from './config/configuration';
     CommonModule,
     PrismaModule,
     LikesModule,
+    FollowsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
