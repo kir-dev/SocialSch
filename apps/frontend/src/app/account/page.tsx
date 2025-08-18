@@ -10,8 +10,6 @@ import AccountPosts from '@/components/accountPosts';
 import { useState } from 'react';
 import useSWR from 'swr';
 import { axiosGetFetcher } from '@/lib/fetchers';
-import useCommentsByAuthor from '@/hooks/use-commentsByAuthor';
-import usePostsByAuthor from '@/hooks/use-postsByAuthor';
 
 export default function AccountPage() {
   const { data: user } = useProfile();
@@ -19,6 +17,11 @@ export default function AccountPage() {
   const { data: comments } = useComments();
 
   const [commentsCLick, setCommentsCLick] = useState(false);
+
+  // Fetch total likes for the current user
+  const { data: totalLikes } = useSWR<number>(user ? `/likes/total/user/${user.authSchId}` : null, axiosGetFetcher, {
+    shouldRetryOnError: false,
+  });
 
   let userPosts: Post[] = [];
   let userComments: Comment[] = [];
@@ -32,7 +35,7 @@ export default function AccountPage() {
   if (!user) {
     return (
       <div className='min-w-full w-full flex justify-center pt-16 text-red-600 font-bold text-2xl'>
-        Please log in to access this pagge
+        Please log in to access this page
       </div>
     );
   }
@@ -49,7 +52,8 @@ export default function AccountPage() {
         </div>
         <div className='pt-12 pb-20 flex flex-row justify-start items-center text-2xl font-bold'>
           <p className='pr-12'>{userPosts.length} posts</p>
-          <p>123 likes</p>
+          <p>{totalLikes ?? 0}</p>
+          <p className='ml-2'>likes</p>
         </div>
         <Separator className='my-4 max-w-3xs' />
         <div className='flex h-5 items-center space-x-4 text-sm mb-12'>
