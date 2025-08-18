@@ -56,6 +56,17 @@ export class CommentsService {
     });
   }
 
+  async findCommentsByAuthorId(authorId: string): Promise<CommentEntity[]> {
+    return this.prisma.comment.findMany({
+      where: {
+        authorId: authorId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
   async update(id: number, updateCommentDto: UpdateCommentDto, _user: User): Promise<CommentEntity> {
     return this.prisma.comment.update({
       where: {
