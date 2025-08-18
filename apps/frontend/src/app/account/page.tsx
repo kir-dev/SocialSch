@@ -2,37 +2,61 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import useProfile from '@/hooks/use-profile';
 import usePosts from '@/hooks/use-posts';
-import type { Post, Comment } from '@/types';
+import type { Post, Comment, User } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import useComments from '@/hooks/use-comments';
 import AccountComments from '@/components/accountComments';
 import AccountPosts from '@/components/accountPosts';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import useSWR from 'swr';
 import { axiosGetFetcher } from '@/lib/fetchers';
+import { useSearchParams } from 'next/navigation';
+import useUser from '@/hooks/use-user';
+import usePostsByAuthor from '@/hooks/use-postsByAuthor';
+import useCommentsByAuthor from '@/hooks/use-commentsByAuthor';
 
 export default function AccountPage() {
-  const { data: user } = useProfile();
+  const searchParams = useSearchParams();
+  const viewId = searchParams.get('id') || null;
+
+  const { data: me } = useProfile();
+  const isViewingMe = !viewId || viewId === me?.authSchId;
+
   const { data: posts } = usePosts();
   const { data: comments } = useComments();
 
+  const { data: otherUser } = useUser(isViewingMe ? '' : viewId);
+  const { data: postsByOther } = usePostsByAuthor(isViewingMe ? '' : viewId);
+  const { data: commentsByOther } = useCommentsByAuthor(isViewingMe ? '' : viewId);
+
   const [commentsCLick, setCommentsCLick] = useState(false);
 
-  // Fetch total likes for the current user
-  const { data: totalLikes } = useSWR<number>(user ? `/likes/total/user/${user.authSchId}` : null, axiosGetFetcher, {
-    shouldRetryOnError: false,
-  });
+  const viewedUser: User | undefined = useMemo(() => {
+    if (isViewingMe) return me;
+    return otherUser;
+  }, [isViewingMe, me, otherUser]);
 
   let userPosts: Post[] = [];
   let userComments: Comment[] = [];
-  if (posts) {
-    userPosts = posts.filter((post) => post.authorId === user?.authSchId);
-  }
-  if (comments) {
-    userComments = comments.filter((comment) => comment.authorId === user?.authSchId);
+  if (viewedUser) {
+    if (isViewingMe) {
+      userPosts = (posts ?? []).filter((post) => post.authorId === viewedUser.authSchId);
+      userComments = (comments ?? []).filter((comment) => comment.authorId === viewedUser.authSchId);
+    } else {
+      userPosts = postsByOther ?? [];
+      userComments = commentsByOther ?? [];
+    }
   }
 
-  if (!user) {
+  const { data: totalLikes } = useSWR<number>(
+    viewedUser ? `/likes/total/user/${viewedUser.authSchId}` : null,
+    axiosGetFetcher,
+    {
+      shouldRetryOnError: false,
+    }
+  );
+
+  if (!viewedUser) {
     return (
       <div className='min-w-full w-full flex justify-center pt-16 text-red-600 font-bold text-2xl'>
         Please log in to access this page
@@ -44,11 +68,11 @@ export default function AccountPage() {
     <div className='bg-background min-h-screen flex flex-row justify-center items-start pt-16'>
       <div className='bg-background min-w-4/5 flex flex-col justify-center items-start'>
         <Avatar className='h-32 w-32 rounded-lg'>
-          <AvatarFallback className='rounded-lg text-6xl font-bold'>{user?.username[0]}</AvatarFallback>
+          <AvatarFallback className='rounded-lg text-6xl font-bold'>{viewedUser.username[0]}</AvatarFallback>
         </Avatar>
         <div className='grid flex-1 text-left text-3xl leading-tight pt-6'>
-          <span className='truncate font-medium'>{user?.username}</span>
-          <span className='truncate text-lg'>{user?.email}</span>
+          <span className='truncate font-medium'>{viewedUser.username}</span>
+          <span className='truncate text-lg'>{viewedUser.email}</span>
         </div>
         <div className='pt-12 pb-20 flex flex-row justify-start items-center text-2xl font-bold'>
           <p className='pr-12'>{userPosts.length} posts</p>
