@@ -29,8 +29,6 @@ import type { Post, Comment, User } from '@/types';
 import useSWR from 'swr';
 import { axiosGetFetcher } from '@/lib/fetchers';
 
-// A teljes oldal logikáját külön kliens komponensbe tesszük,
-// hogy a useSearchParams a Suspense határ ALATT fusson.
 function AccountPageContent() {
   const searchParams = useSearchParams();
   const viewId = searchParams.get('id') || null;
