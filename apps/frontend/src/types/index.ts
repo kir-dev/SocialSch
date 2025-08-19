@@ -23,6 +23,11 @@ export interface User {
   username: string;
 }
 
+export interface FollowEdge {
+  follower?: Pick<User, 'authSchId' | 'username' | 'email'>;
+  following?: Pick<User, 'authSchId' | 'username' | 'email'>;
+}
+
 export interface Comment {
   commentId: number;
   postId: number;

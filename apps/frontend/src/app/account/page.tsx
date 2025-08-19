@@ -1,38 +1,123 @@
 'use client';
+
+import { useMemo, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import useProfile from '@/hooks/use-profile';
-import usePosts from '@/hooks/use-posts';
-import type { Post, Comment } from '@/types';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+
+import useProfile from '@/hooks/use-profile';
+import useUser from '@/hooks/use-user';
+import usePosts from '@/hooks/use-posts';
 import useComments from '@/hooks/use-comments';
-import AccountComments from '@/components/accountComments';
+import usePostsByAuthor from '@/hooks/use-postsByAuthor';
+import useCommentsByAuthor from '@/hooks/use-commentsByAuthor';
+
+import {
+  useMyFollowingIds,
+  useFollowersList,
+  useFollowingList,
+  followUserOptimistic,
+  unfollowUserOptimistic,
+} from '@/hooks/use-follows';
+
 import AccountPosts from '@/components/accountPosts';
-import { useState } from 'react';
+import AccountComments from '@/components/accountComments';
+
+import type { Post, Comment, User } from '@/types';
 import useSWR from 'swr';
 import { axiosGetFetcher } from '@/lib/fetchers';
 
-export default function AccountPage() {
-  const { data: user } = useProfile();
-  const { data: posts } = usePosts();
-  const { data: comments } = useComments();
+function AccountPageContent() {
+  const searchParams = useSearchParams();
+  const viewId = searchParams.get('id') || null;
 
-  const [commentsCLick, setCommentsCLick] = useState(false);
+  // Own profile
+  const { data: me, isLoading: profileLoading } = useProfile();
 
-  // Fetch total likes for the current user
-  const { data: totalLikes } = useSWR<number>(user ? `/likes/total/user/${user.authSchId}` : null, axiosGetFetcher, {
-    shouldRetryOnError: false,
-  });
+  // Check if viewing own profile
+  const isViewingMe = !viewId || viewId === me?.authSchId;
 
-  let userPosts: Post[] = [];
-  let userComments: Comment[] = [];
-  if (posts) {
-    userPosts = posts.filter((post) => post.authorId === user?.authSchId);
+  // Global lists (for viewing own profile)
+  const { data: allPosts } = usePosts();
+  const { data: allComments } = useComments();
+
+  // Other user's data (if not viewing myself)
+  const { data: otherUser } = useUser(isViewingMe ? '' : viewId);
+  const { data: postsByOther } = usePostsByAuthor(isViewingMe ? '' : viewId);
+  const { data: commentsByOther } = useCommentsByAuthor(isViewingMe ? '' : viewId);
+
+  // Displayed user
+  const viewedUser: User | undefined = useMemo(() => {
+    if (isViewingMe) return me;
+    return otherUser;
+  }, [isViewingMe, me, otherUser]);
+
+  // Posts / comments for the displayed user
+  const userPosts: Post[] = useMemo(() => {
+    if (!viewedUser) return [];
+    return isViewingMe ? (allPosts ?? []).filter((p) => p.authorId === viewedUser.authSchId) : (postsByOther ?? []);
+  }, [isViewingMe, viewedUser, allPosts, postsByOther]);
+
+  const userComments: Comment[] = useMemo(() => {
+    if (!viewedUser) return [];
+    return isViewingMe
+      ? (allComments ?? []).filter((c) => c.authorId === viewedUser.authSchId)
+      : (commentsByOther ?? []);
+  }, [isViewingMe, viewedUser, allComments, commentsByOther]);
+
+  // Total likes received by the displayed user
+  const { data: totalLikes } = useSWR<number>(
+    viewedUser ? `/likes/total/user/${viewedUser.authSchId}` : null,
+    axiosGetFetcher,
+    { shouldRetryOnError: false }
+  );
+
+  // Following/Followers lists
+  const { users: followingUsers } = useFollowingList(viewedUser?.authSchId);
+  const { users: followerUsers } = useFollowersList(viewedUser?.authSchId);
+  const followingCount = followingUsers.length;
+  const followersCount = followerUsers.length;
+
+  const { ids: myFollowingIds, isLoading: followingIdsLoading } = useMyFollowingIds(Boolean(me));
+  const isMe = !!viewedUser && me?.authSchId === viewedUser.authSchId;
+
+  const followed = useMemo(() => {
+    if (!viewedUser || isMe) return false;
+    return myFollowingIds.includes(viewedUser.authSchId);
+  }, [viewedUser, isMe, myFollowingIds]);
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const toggleFollow = async () => {
+    if (!me || !viewedUser || isMe || submitting) return;
+    setSubmitting(true);
+    try {
+      if (!followed) {
+        await followUserOptimistic(me.authSchId, {
+          authSchId: viewedUser.authSchId,
+          username: viewedUser.username,
+          email: viewedUser.email,
+        });
+      } else {
+        await unfollowUserOptimistic(me.authSchId, viewedUser.authSchId);
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const [showComments, setShowComments] = useState(false);
+
+  if (viewId && !viewedUser) {
+    return <div className='min-w-full w-full flex justify-center pt-16'>Loading...</div>;
   }
-  if (comments) {
-    userComments = comments.filter((comment) => comment.authorId === user?.authSchId);
+  if (!viewId && profileLoading && !viewedUser) {
+    return <div className='min-w-full w-full flex justify-center pt-16'>Loading...</div>;
   }
 
-  if (!user) {
+  if (!viewedUser) {
     return (
       <div className='min-w-full w-full flex justify-center pt-16 text-red-600 font-bold text-2xl'>
         Please log in to access this page
@@ -42,48 +127,90 @@ export default function AccountPage() {
 
   return (
     <div className='bg-background min-h-screen flex flex-row justify-center items-start pt-16'>
-      <div className='bg-background min-w-4/5 flex flex-col justify-center items-start'>
-        <Avatar className='h-32 w-32 rounded-lg'>
-          <AvatarFallback className='rounded-lg text-6xl font-bold'>{user?.username[0]}</AvatarFallback>
-        </Avatar>
-        <div className='grid flex-1 text-left text-3xl leading-tight pt-6'>
-          <span className='truncate font-medium'>{user?.username}</span>
-          <span className='truncate text-lg'>{user?.email}</span>
-        </div>
-        <div className='pt-12 pb-20 flex flex-row justify-start items-center text-2xl font-bold'>
-          <p className='pr-12'>{userPosts.length} posts</p>
-          <p>{totalLikes ?? 0}</p>
-          <p className='ml-2'>likes</p>
-        </div>
-        <Separator className='my-4 max-w-3xs' />
-        <div className='flex h-5 items-center space-x-4 text-sm mb-12'>
-          <button
-            className='text-lg cursor-pointer hover:underline bg-transparent border-none p-0'
-            onClick={() => setCommentsCLick(false)}
-            onKeyDown={(e) => e.key === 'Enter' && setCommentsCLick(false)}
-          >
-            Posts
-          </button>
-          <Separator orientation='vertical' />
-          <button
-            className='text-lg cursor-pointer hover:underline bg-transparent border-none p-0'
-            onClick={() => setCommentsCLick((prevState) => !prevState)}
-            onKeyDown={(e) => e.key === 'Enter' && setCommentsCLick((prevState) => !prevState)}
-          >
-            Comments
-          </button>
-        </div>
-        {commentsCLick && (
-          <div className='min-w-full grid grid-cols-2 gap-4'>
-            <AccountComments userComments={userComments} />
+      <div className='bg-background w-full max-w-4xl flex flex-col justify-center items-stretch px-4 md:px-0'>
+        {/* Profile header card */}
+        <div className='w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6 rounded-xl border p-6'>
+          <div className='flex items-center gap-4'>
+            <Avatar className='h-24 w-24 rounded-lg'>
+              <AvatarFallback className='rounded-lg text-4xl font-bold'>
+                {viewedUser.username?.[0] ?? 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div className='flex flex-col'>
+              <span className='text-2xl md:text-3xl font-semibold'>{viewedUser.username}</span>
+              <span className='text-muted-foreground'>{viewedUser.email}</span>
+
+              <div className='mt-4 grid grid-cols-3 gap-4 text-sm md:text-base'>
+                <div>
+                  <span className='font-semibold'>{userPosts.length}</span> posts
+                </div>
+                <div>
+                  <span className='font-semibold'>{totalLikes ?? 0}</span> likes
+                </div>
+                <div className='flex gap-4'>
+                  <span title='Following'>
+                    <span className='font-semibold'>{followingCount}</span> following
+                  </span>
+                  <span title='Followers'>
+                    <span className='font-semibold'>{followersCount}</span> followers
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-        {!commentsCLick && (
-          <div className='min-w-full grid grid-cols-2 gap-4'>
-            <AccountPosts userPosts={userPosts} />
+
+          {!isMe && !followingIdsLoading && (
+            <Button
+              variant={followed ? 'outline' : 'default'}
+              className={followed ? 'text-muted-foreground' : ''}
+              onClick={toggleFollow}
+              disabled={submitting}
+              aria-pressed={followed}
+            >
+              {followed ? 'Followed' : 'Follow'}
+            </Button>
+          )}
+        </div>
+
+        {/* Tabs */}
+        <div className='mt-10'>
+          <div className='flex h-5 items-center space-x-4 text-sm mb-6'>
+            <button
+              className={`text-lg cursor-pointer bg-transparent border-none p-0 ${!showComments ? 'underline' : 'hover:underline'}`}
+              onClick={() => setShowComments(false)}
+              onKeyDown={(e) => e.key === 'Enter' && setShowComments(false)}
+            >
+              Posts
+            </button>
+            <Separator orientation='vertical' />
+            <button
+              className={`text-lg cursor-pointer bg-transparent border-none p-0 ${showComments ? 'underline' : 'hover:underline'}`}
+              onClick={() => setShowComments((s) => !s)}
+              onKeyDown={(e) => e.key === 'Enter' && setShowComments((s) => !s)}
+            >
+              Comments
+            </button>
           </div>
-        )}
+
+          {showComments ? (
+            <div className='min-w-full grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <AccountComments userComments={userComments} />
+            </div>
+          ) : (
+            <div className='min-w-full grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <AccountPosts userPosts={userPosts} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
+  );
+}
+
+export default function AccountPage() {
+  return (
+    <Suspense fallback={null}>
+      <AccountPageContent />
+    </Suspense>
   );
 }
