@@ -1,13 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { IsNumber, IsPositive } from 'class-validator';
 
-@Entity()
 export class Follow {
-  @PrimaryGeneratedColumn()
+  @IsNumber()
+  @IsPositive()
   id: number;
 
-  @Column()
+  @IsNumber()
+  @IsPositive()
   followerId: number;
 
-  @Column()
+  @IsNumber()
+  @IsPositive()
   followingId: number;
 }

@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { FollowerResponseDto, FollowingResponseDto } from './dto';
+import { UserDto } from '../users/dto/user.dto';
 
 @Injectable()
 export class FollowsService {
@@ -43,29 +45,41 @@ export class FollowsService {
     return rows.map((r) => r.followingId);
   }
 
-  async followersOf(
-    userAuthSchId: string
-  ): Promise<{ follower: { authSchId: string; username: string; email: string } }[]> {
+  async followersOf(userAuthSchId: string): Promise<FollowerResponseDto[]> {
     if (!userAuthSchId) throw new BadRequestException('Invalid user');
-    return this.prisma.follow.findMany({
+
+    const results = await this.prisma.follow.findMany({
       where: { followingId: userAuthSchId },
       select: {
         follower: { select: { authSchId: true, username: true, email: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    return results.map(
+      (result) =>
+        new FollowerResponseDto({
+          follower: new UserDto(result.follower),
+        })
+    );
   }
 
-  async followingOf(
-    userAuthSchId: string
-  ): Promise<{ following: { authSchId: string; username: string; email: string } }[]> {
+  async followingOf(userAuthSchId: string): Promise<FollowingResponseDto[]> {
     if (!userAuthSchId) throw new BadRequestException('Invalid user');
-    return this.prisma.follow.findMany({
+
+    const results = await this.prisma.follow.findMany({
       where: { followerId: userAuthSchId },
       select: {
         following: { select: { authSchId: true, username: true, email: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
+
+    return results.map(
+      (result) =>
+        new FollowingResponseDto({
+          following: new UserDto(result.following),
+        })
+    );
   }
 }

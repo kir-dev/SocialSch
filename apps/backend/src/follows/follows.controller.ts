@@ -2,6 +2,7 @@ import { Controller, Get, Post, Delete, Param, Req, UseGuards } from '@nestjs/co
 import { Request } from 'express';
 import { FollowsService } from './follows.service';
 import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from '@kir-dev/passport-authsch';
 
 interface AuthenticatedRequest extends Request {
   user: {
@@ -16,8 +17,8 @@ export class FollowsController {
 
   // List the IDs I am following (for button state)
   @Get('ids')
-  async myFollowingIds(@Req() req: AuthenticatedRequest): Promise<string[]> {
-    return this.followsService.followingIds(req.user.authSchId);
+  async myFollowingIds(@CurrentUser() user: { authSchId: string }): Promise<string[]> {
+    return this.followsService.followingIds(user.authSchId);
   }
 
   // List users I follow
