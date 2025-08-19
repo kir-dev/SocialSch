@@ -29,7 +29,9 @@ import type { Post, Comment, User } from '@/types';
 import useSWR from 'swr';
 import { axiosGetFetcher } from '@/lib/fetchers';
 
-export default function AccountPage() {
+// A teljes oldal logikáját külön kliens komponensbe tesszük,
+// hogy a useSearchParams a Suspense határ ALATT fusson.
+function AccountPageContent() {
   const searchParams = useSearchParams();
   const viewId = searchParams.get('id') || null;
 
@@ -126,85 +128,91 @@ export default function AccountPage() {
   }
 
   return (
-    <Suspense fallback={null}>
-      <div className='bg-background min-h-screen flex flex-row justify-center items-start pt-16'>
-        <div className='bg-background w-full max-w-4xl flex flex-col justify-center items-stretch px-4 md:px-0'>
-          {/* Profile header card */}
-          <div className='w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6 rounded-xl border p-6'>
-            <div className='flex items-center gap-4'>
-              <Avatar className='h-24 w-24 rounded-lg'>
-                <AvatarFallback className='rounded-lg text-4xl font-bold'>
-                  {viewedUser.username?.[0] ?? 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div className='flex flex-col'>
-                <span className='text-2xl md:text-3xl font-semibold'>{viewedUser.username}</span>
-                <span className='text-muted-foreground'>{viewedUser.email}</span>
+    <div className='bg-background min-h-screen flex flex-row justify-center items-start pt-16'>
+      <div className='bg-background w-full max-w-4xl flex flex-col justify-center items-stretch px-4 md:px-0'>
+        {/* Profile header card */}
+        <div className='w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6 rounded-xl border p-6'>
+          <div className='flex items-center gap-4'>
+            <Avatar className='h-24 w-24 rounded-lg'>
+              <AvatarFallback className='rounded-lg text-4xl font-bold'>
+                {viewedUser.username?.[0] ?? 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div className='flex flex-col'>
+              <span className='text-2xl md:text-3xl font-semibold'>{viewedUser.username}</span>
+              <span className='text-muted-foreground'>{viewedUser.email}</span>
 
-                <div className='mt-4 grid grid-cols-3 gap-4 text-sm md:text-base'>
-                  <div>
-                    <span className='font-semibold'>{userPosts.length}</span> posts
-                  </div>
-                  <div>
-                    <span className='font-semibold'>{totalLikes ?? 0}</span> likes
-                  </div>
-                  <div className='flex gap-4'>
-                    <span title='Following'>
-                      <span className='font-semibold'>{followingCount}</span> following
-                    </span>
-                    <span title='Followers'>
-                      <span className='font-semibold'>{followersCount}</span> followers
-                    </span>
-                  </div>
+              <div className='mt-4 grid grid-cols-3 gap-4 text-sm md:text-base'>
+                <div>
+                  <span className='font-semibold'>{userPosts.length}</span> posts
+                </div>
+                <div>
+                  <span className='font-semibold'>{totalLikes ?? 0}</span> likes
+                </div>
+                <div className='flex gap-4'>
+                  <span title='Following'>
+                    <span className='font-semibold'>{followingCount}</span> following
+                  </span>
+                  <span title='Followers'>
+                    <span className='font-semibold'>{followersCount}</span> followers
+                  </span>
                 </div>
               </div>
             </div>
-
-            {!isMe && !followingIdsLoading && (
-              <Button
-                variant={followed ? 'outline' : 'default'}
-                className={followed ? 'text-muted-foreground' : ''}
-                onClick={toggleFollow}
-                disabled={submitting}
-                aria-pressed={followed}
-              >
-                {followed ? 'Followed' : 'Follow'}
-              </Button>
-            )}
           </div>
 
-          {/* Tabs */}
-          <div className='mt-10'>
-            <div className='flex h-5 items-center space-x-4 text-sm mb-6'>
-              <button
-                className={`text-lg cursor-pointer bg-transparent border-none p-0 ${!showComments ? 'underline' : 'hover:underline'}`}
-                onClick={() => setShowComments(false)}
-                onKeyDown={(e) => e.key === 'Enter' && setShowComments(false)}
-              >
-                Posts
-              </button>
-              <Separator orientation='vertical' />
-              <button
-                className={`text-lg cursor-pointer bg-transparent border-none p-0 ${showComments ? 'underline' : 'hover:underline'}`}
-                onClick={() => setShowComments((s) => !s)}
-                onKeyDown={(e) => e.key === 'Enter' && setShowComments((s) => !s)}
-              >
-                Comments
-              </button>
+          {!isMe && !followingIdsLoading && (
+            <Button
+              variant={followed ? 'outline' : 'default'}
+              className={followed ? 'text-muted-foreground' : ''}
+              onClick={toggleFollow}
+              disabled={submitting}
+              aria-pressed={followed}
+            >
+              {followed ? 'Followed' : 'Follow'}
+            </Button>
+          )}
+        </div>
+
+        {/* Tabs */}
+        <div className='mt-10'>
+          <div className='flex h-5 items-center space-x-4 text-sm mb-6'>
+            <button
+              className={`text-lg cursor-pointer bg-transparent border-none p-0 ${!showComments ? 'underline' : 'hover:underline'}`}
+              onClick={() => setShowComments(false)}
+              onKeyDown={(e) => e.key === 'Enter' && setShowComments(false)}
+            >
+              Posts
+            </button>
+            <Separator orientation='vertical' />
+            <button
+              className={`text-lg cursor-pointer bg-transparent border-none p-0 ${showComments ? 'underline' : 'hover:underline'}`}
+              onClick={() => setShowComments((s) => !s)}
+              onKeyDown={(e) => e.key === 'Enter' && setShowComments((s) => !s)}
+            >
+              Comments
+            </button>
+          </div>
+
+          {showComments ? (
+            <div className='min-w-full grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <AccountComments userComments={userComments} />
             </div>
-
-            {showComments ? (
-              <div className='min-w-full grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <AccountComments userComments={userComments} />
-              </div>
-            ) : (
-              <div className='min-w-full grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <AccountPosts userPosts={userPosts} />
-              </div>
-            )}
-          </div>
+          ) : (
+            <div className='min-w-full grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <AccountPosts userPosts={userPosts} />
+            </div>
+          )}
         </div>
       </div>
+    </div>
+  );
+}
+
+export default function AccountPage() {
+  return (
+    <Suspense fallback={null}>
+      <AccountPageContent />
     </Suspense>
   );
 }
