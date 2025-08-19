@@ -5,6 +5,7 @@ import { User } from '@/types';
 import useProfile from '@/hooks/use-profile';
 import { useMyFollowingIds, followUserOptimistic, unfollowUserOptimistic } from '@/hooks/use-follows';
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
 
 interface PostHeaderProps {
   user: User;
@@ -42,13 +43,17 @@ export default function PostHeader({ user }: Readonly<PostHeaderProps>) {
 
   return (
     <CardHeader className='flex flex-row justify-between items-center'>
-      <div className='flex flex-row justify-start items-center'>
-        <CircleUserRound size='32' />
+      <Link
+        href={`/account?id=${user.authSchId}`}
+        className='flex flex-row justify-start items-center focus:outline-none focus:ring-2 focus:ring-ring rounded-md'
+        aria-label={`Felhasználói profil megnyitása: ${user.username}`}
+      >
+        <CircleUserRound size='32' aria-hidden='true' />
         <div className='flex flex-col pl-1'>
-          <CardTitle>{user.username}</CardTitle>
-          <CardDescription>{user.email}</CardDescription>
+          <CardTitle className='hover:underline'>{user.username}</CardTitle>
+          <CardDescription className='hover:underline'>{user.email}</CardDescription>
         </div>
-      </div>
+      </Link>
       {!isMe && !idsLoading && (
         <Button
           variant='link'
