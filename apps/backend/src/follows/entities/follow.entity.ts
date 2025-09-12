@@ -1,15 +1,15 @@
-import { IsNumber, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class Follow {
-  @IsNumber()
-  @IsPositive()
-  id: number;
+  @IsString()
+  @IsNotEmpty()
+  id: string;
 
-  @IsNumber()
-  @IsPositive()
-  followerId: number;
+  @IsString()
+  @IsNotEmpty()
+  followerId: string;
 
-  @IsNumber()
-  @IsPositive()
-  followingId: number;
+  @IsString()
+  @IsNotEmpty()
+  followingId: string;
 }
