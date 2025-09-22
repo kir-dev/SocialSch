@@ -22,6 +22,9 @@ model User {
   posts     Post[]
   comments  Comment[]
   likes     Like[]
+  followers   Follow[] @relation("followers")
+  following   Follow[] @relation("following")
+
 }
 
 model Post {
@@ -60,3 +63,16 @@ model Like {
 
 
 }
+
+model Follow {
+  id           String @id @default(cuid())
+  followerId   String
+  followingId  String
+  createdAt    DateTime @default(now())
+
+  follower   User   @relation("following", fields: [followerId], references: [authSchId])
+  following  User   @relation("followers", fields: [followingId], references: [authSchId])
+
+  @@unique([followerId, followingId])
+}
+

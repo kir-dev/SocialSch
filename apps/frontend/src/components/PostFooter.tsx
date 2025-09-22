@@ -61,7 +61,8 @@ export default function PostFooter({ likeCount, commentCount, createdAt, post }:
         const countKey = `/likes/count/${post.postId}`;
         swrMutate(countKey, response.data.count, { revalidate: false });
 
-        const totalKey = `/likes/total/user/${user.authSchId}`;
+        const totalKey = `/likes/total/user/${post.authorId}`;
+
         swrMutate(
           totalKey,
           (prev: number | undefined) => (response.data.liked ? (prev ?? 0) + 1 : Math.max(0, (prev ?? 0) - 1)),

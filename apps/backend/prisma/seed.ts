@@ -1,7 +1,15 @@
 import { faker } from '@faker-js/faker';
-import { PrismaClient } from 'src/generated/prisma/client/client';
+import { PrismaClient } from '../src/generated/prisma/client/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import * as process from 'node:process';
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
+
+const pgDriver = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter: pgDriver });
 
 async function main(): Promise<void> {
   await prisma.comment.deleteMany();
